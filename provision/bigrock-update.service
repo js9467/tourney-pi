@@ -1,0 +1,7 @@
+[Unit]
+Description=BigRock Updater
+
+[Service]
+Type=oneshot
+User=pi
+ExecStart=/opt/bigrock-app/scripts/update.sh
