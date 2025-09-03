@@ -75,26 +75,36 @@
       </div>
 
       <!-- Sounds -->
-        <div>
-          <label class="block font-semibold mb-1">Sound for Followed Boat Activity</label>
-          <select v-model="settings.followed_sound" @change="onFollowedSoundChange" class="w-full p-2 rounded border border-gray-400 bg-white text-black">
-            <option value="">None</option>
-            <option v-for="s in availableSounds" :key="s.file" :value="s.file">{{ s.name }}</option>
-          </select>
-        </div>
+      <div>
+        <label class="block font-semibold mb-1">Sound for Followed Boat Activity</label>
+        <select v-model="settings.followed_sound" @change="onFollowedSoundChange" class="w-full p-2 rounded border border-gray-400 bg-white text-black">
+          <option value="">None</option>
+          <option v-for="s in availableSounds" :key="s.file" :value="s.file">{{ s.name }}</option>
+        </select>
+      </div>
 
-        <div>
-          <label class="block font-semibold mb-1">Sound for Any "Boated" Event</label>
-          <select v-model="settings.boated_sound" @change="onBoatedSoundChange" class="w-full p-2 rounded border border-gray-400 bg-white text-black">
-            <option value="">None</option>
-            <option v-for="s in availableSounds" :key="s.file" :value="s.file">{{ s.name }}</option>
-          </select>
-        </div>
+      <div>
+        <label class="block font-semibold mb-1">Sound for Any "Boated" Event</label>
+        <select v-model="settings.boated_sound" @change="onBoatedSoundChange" class="w-full p-2 rounded border border-gray-400 bg-white text-black">
+          <option value="">None</option>
+          <option v-for="s in availableSounds" :key="s.file" :value="s.file">{{ s.name }}</option>
+        </select>
+      </div>
 
       <div class="flex items-center space-x-2">
         <input type="checkbox" id="sounds" v-model="settings.sounds_enabled" @change="saveSettings">
         <label for="sounds" class="font-semibold">Play Event Sounds</label>
       </div>
+
+      <!-- ✅ NEW: Update button (only addition) -->
+      <div class="pt-6">
+        <h2 class="text-xl font-semibold mb-2">🔄 Software Update</h2>
+        <button @click="runUpdate"
+                class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+          Update Now
+        </button>
+      </div>
+      <!-- end new block -->
 
       <!-- Email Alerts -->
       <div class="pt-6">
@@ -256,7 +266,7 @@
         apiTournamentLabels: {},
         fallbackStream: '',
         wifiNetworks: [],
-        wifiStatus: { connected: null },   // NEW: mirrors Bluetooth-style status
+        wifiStatus: { connected: null },
         bluetoothDevices: [],
         wifiPopup: false,
         bluetoothPopup: false,
@@ -327,8 +337,8 @@
           this.showToast(`✅ Test alert sent to ${res.data.success_count} recipients.`, 'success');
         }).catch(() => this.showToast('❌ Failed to send test alert.', 'error'));
       },
-        onFollowedSoundChange() { const f = this.settings.followed_sound; if (f) this.previewSound(f); this.saveSettings(); },
-        onBoatedSoundChange()   { const f = this.settings.boated_sound;   if (f) this.previewSound(f); this.saveSettings(); },
+      onFollowedSoundChange() { const f = this.settings.followed_sound; if (f) this.previewSound(f); this.saveSettings(); },
+      onBoatedSoundChange()   { const f = this.settings.boated_sound;   if (f) this.previewSound(f); this.saveSettings(); },
       onTournamentChange() { this.saveSettings(); this.updateTournamentLogo(); },
       setBrandColor(t){ const color = this.tournaments[t]?.color || '#002855'; document.documentElement.style.setProperty('--brand-color', color); },
       updateTournamentLogo() { const t = this.settings.tournament; this.tournamentLogo = this.tournaments[t]?.logo || ''; this.setBrandColor(t); },
@@ -358,7 +368,6 @@
       connectWifi(ssid, password) {
         axios.post('/wifi/connect', { ssid, password }).then(() => {
           this.showToast(`Connecting to ${ssid}`, 'success');
-          // Refresh status and UI
           this.refreshWifiStatus();
           setTimeout(() => { this.wifiPopup = false; this.refreshWifiStatus(); }, 1200);
         }).catch(err => {
@@ -405,6 +414,16 @@
           const msg = err?.response?.data?.message || 'Disconnect failed.';
           this.showToast(`❌ ${msg}`, 'error');
         });
+      },
+
+      /* ✅ NEW: Update trigger (only addition) */
+      async runUpdate() {
+        try {
+          this.showToast('🚀 Update started…', 'info');
+          await axios.post('/api/update');
+        } catch {
+          this.showToast('❌ Could not start update', 'error');
+        }
       }
     },
     mounted() {
