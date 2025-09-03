@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings</title>
+  <script src="/static/js/offline.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4.15/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <link rel="stylesheet" href="/static/css/base.css">
+  <style>
+    body { touch-action: manipulation; }
+    .toast {
+      position: fixed; top: 5rem; left: 50%; transform: translateX(-50%);
+      z-index: 9999; padding: 0.75rem 1rem; border-radius: 0.375rem;
+      font-weight: 600; color: black; text-align: center; max-width: 90vw;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans overflow-y-auto">
+  <div id="app">
+    <!-- Header -->
+    <header class="bg-brand-blue text-white flex items-center justify-between px-4 py-3 shadow-md">
+      <div class="flex items-center space-x-4">
+        <img v-if="tournamentLogo" :src="tournamentLogo" alt="Tournament Logo" class="h-14 drop-shadow">
+        <span v-else class="text-white text-base">Loading Logo...</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 bg-blue-900/50 backdrop-blur-sm rounded-full px-4 py-2 shadow-md border border-yellow-400/70 animate-pulse-slow">
+          <button data-vhf-toggle class="px-4 py-2 w-28 sm:w-32 font-semibold border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-blue-900 transition shadow-md">VHF ON</button>
+          <div class="flex items-center gap-2 text-sm text-white flex-nowrap">
+            <span class="text-lg">🔊</span>
+            <input type="range" min="0" max="100" data-vhf-volume class="h-1 bg-yellow-400 rounded-lg appearance-none cursor-pointer w-24 sm:w-32 md:w-40 flex-shrink-0 accent-yellow-400">
+            <span data-vhf-volume-display class="w-8 text-right text-xs"></span>
+          </div>
+        </div>
+        <a href="/" class="px-4 py-2 text-white font-semibold border border-white rounded hover:bg-white hover:text-blue-900 transition">Home</a>
+      </div>
+    </header>
+
+    <div class="p-6 max-w-4xl mx-auto bg-white shadow-xl rounded-xl mt-6 space-y-8">
+      <h1 class="text-3xl font-bold text-brand-gold mb-2">⚙️ Settings</h1>
+
+      <!-- Tournament Selection -->
+      <div>
+        <label class="block font-semibold mb-1">Tournament</label>
+        <div v-if="Object.keys(validTournaments).length">
+          <select v-model="settings.tournament" @change="onTournamentChange"
+                  class="w-full p-2 rounded border border-gray-400 bg-white text-black">
+            <option disabled value="">-- Select Tournament --</option>
+            <option v-for="(info, name) in validTournaments" :key="name" :value="name">
+              {{ name }}{{ info && info.label ? ' (' + info.label + ')' : '' }}
+            </option>
+          </select>
+        </div>
+        <div v-else class="text-sm text-gray-500">Loading tournaments...</div>
+      </div>
+
+      <!-- Data Source -->
+      <div class="flex items-center space-x-4">
+        <span class="font-semibold">Data Source:</span>
+        <label class="inline-flex items-center"><input type="radio" value="live" v-model="settings.data_source" @change="saveSettings" class="mr-1"> Live</label>
+        <label class="inline-flex items-center"><input type="radio" value="demo" v-model="settings.data_source" @change="saveSettings" class="mr-1"> Demo</label>
+      </div>
+
+      <!-- Event Volume -->
+      <div>
+        <label class="block font-semibold mb-1">Event Activity Volume</label>
+        <input type="range" min="0" max="100" v-model="settings.event_volume"
+               @change="() => { localStorage.setItem('event_volume', settings.event_volume); saveSettings(); }"
+               class="w-full">
+        <div class="text-center">{{ settings.event_volume }}%</div>
+      </div>
+
+      <!-- Sounds -->
+        <div>
+          <label class="block font-semibold mb-1">Sound for Followed Boat Activity</label>
+          <select v-model="settings.followed_sound" @change="onFollowedSoundChange" class="w-full p-2 rounded border border-gray-400 bg-white text-black">
+            <option value="">None</option>
+            <option v-for="s in availableSounds" :key="s.file" :value="s.file">{{ s.name }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Sound for Any "Boated" Event</label>
+          <select v-model="settings.boated_sound" @change="onBoatedSoundChange" class="w-full p-2 rounded border border-gray-400 bg-white text-black">
+            <option value="">None</option>
+            <option v-for="s in availableSounds" :key="s.file" :value="s.file">{{ s.name }}</option>
+          </select>
+        </div>
+
+      <div class="flex items-center space-x-2">
+        <input type="checkbox" id="sounds" v-model="settings.sounds_enabled" @change="saveSettings">
+        <label for="sounds" class="font-semibold">Play Event Sounds</label>
+      </div>
+
+      <!-- Email Alerts -->
+      <div class="pt-6">
+        <h2 class="text-xl font-semibold mb-2">📧 Email Alerts</h2>
+        <div v-for="(recipient, index) in recipients" :key="index" class="mb-3 border-b pb-3">
+          <label class="block mb-1">Email Address:</label>
+          <input type="email" v-model="recipient.email" placeholder="name@example.com"
+                 class="border px-2 py-1 rounded w-full mb-2"
+                 @focus="launchKeyboard" @blur="hideKeyboard" />
+          <button @click="removeRecipient(index)"
+                  class="text-red-600 mt-1 text-sm hover:underline">
+            Remove
+          </button>
+        </div>
+        <button @click="addRecipient" class="bg-green-500 text-white px-3 py-1 rounded mr-2">+ Add Email</button>
+        <button @click="saveAlerts" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mr-2">Save All</button>
+        <button @click="sendTestAlert" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Send Test Alert</button>
+      </div>
+
+      <!-- Wi-Fi -->
+      <div class="pt-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold mb-2">Wi-Fi</h2>
+          <button @click="refreshWifiStatus" class="px-3 py-1 text-sm bg-gray-100 border rounded hover:bg-gray-200">Refresh Status</button>
+        </div>
+
+        <!-- Status line -->
+        <div class="text-sm text-gray-700 mb-3">
+          <span class="mr-2">Connected:
+            <strong v-if="wifiStatus.connected">{{ wifiStatus.connected }}</strong>
+            <strong v-else>None</strong>
+          </span>
+        </div>
+
+        <div class="flex gap-2">
+          <button @click="wifiPopup = true; fetchWifi()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Scan Wi-Fi (Nearby)
+          </button>
+          <button v-if="wifiStatus.connected" @click="disconnectWifi" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            Disconnect {{ wifiStatus.connected }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Bluetooth -->
+      <div class="pt-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold mb-2">Bluetooth</h2>
+          <button @click="refreshBtStatus" class="px-3 py-1 text-sm bg-gray-100 border rounded hover:bg-gray-200">Refresh Status</button>
+        </div>
+
+        <!-- Status line -->
+        <div class="text-sm text-gray-700 mb-3">
+          <template v-if="btStatus.enabled">
+            <span class="mr-2">Connected:
+              <strong v-if="btStatus.connected && btStatus.devices.length">{{ btStatus.devices[0].name }} ({{ btStatus.devices[0].mac }})</strong>
+              <strong v-else>None</strong>
+            </span>
+          </template>
+          <template v-else>
+            <span class="text-red-600">Bluetooth disabled</span>
+          </template>
+        </div>
+
+        <div class="flex gap-2">
+          <button @click="bluetoothPopup = true; scanBluetooth()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Scan Bluetooth (Audio Only)
+          </button>
+          <button v-if="btStatus.connected && btStatus.devices.length" @click="disconnectBluetooth(btStatus.devices[0].mac)"
+                  class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            Disconnect {{ btStatus.devices[0].name || btStatus.devices[0].mac }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div v-if="toast.message" :class="['toast', toast.type === 'success' ? 'toast-success' : toast.type === 'error' ? 'toast-error' : 'toast-info']">
+      {{ toast.message }}
+    </div>
+
+    <!-- Wi-Fi Modal -->
+    <div v-if="wifiPopup" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div class="bg-white p-4 rounded shadow w-11/12 md:w-1/2 max-h-[80vh] overflow-y-auto">
+        <h3 class="text-lg font-bold mb-2">Available Wi-Fi Networks</h3>
+        <div v-if="wifiNetworks.length === 0" class="text-gray-500 mb-2">No networks found.</div>
+        <ul>
+          <li v-for="net in wifiNetworks" :key="net.ssid" class="flex items-center justify-between py-2 border-b">
+            <div class="min-w-0">
+              <div class="font-medium truncate">{{ net.ssid }}</div>
+              <div class="text-xs text-gray-500">
+                <span v-if="net.connected" class="text-green-600 font-semibold mr-2">Connected</span>
+                <span v-else class="text-gray-600 mr-2">Signal: {{ net.signal }}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button v-if="!net.connected" @click="connectWifiPrompt(net.ssid)" class="text-blue-600 hover:underline">Connect</button>
+              <span v-else class="text-green-600 font-semibold">Active</span>
+            </div>
+          </li>
+        </ul>
+        <div class="mt-4 flex justify-end gap-2">
+          <button @click="fetchWifi" class="px-3 py-1 bg-blue-500 text-white rounded">Rescan</button>
+          <button @click="wifiPopup=false" class="px-3 py-1 bg-gray-300 rounded">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bluetooth Modal -->
+    <div v-if="bluetoothPopup" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div class="bg-white p-4 rounded shadow w-11/12 md:w-1/2 max-h-[80vh] overflow-y-auto">
+        <h3 class="text-lg font-bold mb-2">Bluetooth Devices (Audio-capable)</h3>
+        <div v-if="bluetoothDevices.length === 0" class="text-gray-500 mb-2">No devices found.</div>
+        <ul>
+          <li v-for="dev in bluetoothDevices" :key="dev.mac" class="flex items-center justify-between py-2 border-b">
+            <div class="min-w-0">
+              <div class="font-medium truncate">{{ dev.name || dev.mac }}</div>
+              <div class="text-xs text-gray-500">
+                <span v-if="dev.connected" class="text-green-600 font-semibold mr-2">Connected</span>
+                <span v-else-if="dev.paired" class="text-blue-600 mr-2">Paired</span>
+                <span v-else class="text-gray-600 mr-2">New</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button v-if="!dev.connected" @click="connectBluetooth(dev.mac)" class="text-blue-600 hover:underline">Connect</button>
+              <span v-else class="text-green-600 font-semibold">Active</span>
+            </div>
+          </li>
+        </ul>
+        <div class="mt-4 flex justify-end gap-2">
+          <button @click="scanBluetooth" class="px-3 py-1 bg-blue-500 text-white rounded">Rescan</button>
+          <button @click="bluetoothPopup=false" class="px-3 py-1 bg-gray-300 rounded">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="radio-player" hidden></audio>
+
+  <script src="/static/js/vhf.js"></script>
+
+  <script>
+  const { createApp } = Vue;
+
+  createApp({
+    data() {
+      return {
+        settings: {
+          tournament: '',
+          data_source: 'live',
+          event_volume: 80,
+          vhf_volume: 70,
+          sounds_enabled: true,
+          followed_sound: '',
+          boated_sound: '',
+          sms_emails: []
+        },
+        tournaments: {},
+        apiTournamentLabels: {},
+        fallbackStream: '',
+        wifiNetworks: [],
+        wifiStatus: { connected: null },   // NEW: mirrors Bluetooth-style status
+        bluetoothDevices: [],
+        wifiPopup: false,
+        bluetoothPopup: false,
+        toast: { message: '', type: '' },
+        availableSounds: [],
+        tournamentLogo: '',
+        recipients: [{ email: '' }],
+        btStatus: { enabled: false, connected: false, devices: [], adapter: null }
+      };
+    },
+    computed: {
+      validTournaments() {
+        const obj = Object.fromEntries(
+          Object.entries(this.tournaments).filter(([name, val]) =>
+            name !== 'fallback_stream' && val && typeof val === 'object' && !Array.isArray(val)
+          )
+        );
+        Object.keys(obj).forEach(name => {
+          const label = this.apiTournamentLabels[name]?.label;
+          if (label) obj[name].label = label;
+        });
+        return obj;
+      },
+      connectedSSID() {
+        const connected = this.wifiNetworks.find(n => n.connected);
+        return connected ? connected.ssid : 'Not connected';
+      }
+    },
+    methods: {
+      showToast(message, type = 'info') {
+        this.toast = { message, type };
+        setTimeout(() => this.toast.message = '', 3000);
+      },
+      saveSettings() {
+        const emails = this.recipients.filter(r => r.email.trim()).map(r => r.email);
+        this.settings.sms_emails = emails;
+
+        if (!(this.settings.tournament in this.validTournaments)) {
+          this.settings.tournament = '';
+        }
+
+        localStorage.setItem('followed_sound', this.settings.followed_sound || '');
+        localStorage.setItem('boated_sound', this.settings.boated_sound || '');
+        localStorage.setItem('event_volume', String(this.settings.event_volume ?? 80));
+
+        axios.post('/api/settings', this.settings).then(() => {
+          this.showToast('✅ Settings saved.', 'success');
+        }).catch(() => {
+          this.showToast('❌ Failed to save settings.', 'error');
+        });
+      },
+      addRecipient() { this.recipients.push({ email: '' }); },
+      removeRecipient(i) { this.recipients.splice(i, 1); },
+      launchKeyboard() { fetch('/launch_keyboard', { method: 'POST' }).catch(() => {}); },
+      hideKeyboard() { fetch('/hide_keyboard', { method: 'POST' }).catch(() => {}); },
+      saveAlerts() {
+        const emails = this.recipients.filter(r => r.email.trim()).map(r => r.email);
+        axios.post('/alerts/subscribe', { sms_emails: emails });
+        const updatedSettings = { ...this.settings, sms_emails: emails };
+        axios.post('/api/settings', updatedSettings).then(() => {
+          this.showToast('✅ Email recipients saved.', 'success');
+        }).catch(() => {
+          this.showToast('❌ Failed to save recipients.', 'error');
+        });
+      },
+      sendTestAlert() {
+        axios.get('/alerts/test').then(res => {
+          this.showToast(`✅ Test alert sent to ${res.data.success_count} recipients.`, 'success');
+        }).catch(() => this.showToast('❌ Failed to send test alert.', 'error'));
+      },
+        onFollowedSoundChange() { const f = this.settings.followed_sound; if (f) this.previewSound(f); this.saveSettings(); },
+        onBoatedSoundChange()   { const f = this.settings.boated_sound;   if (f) this.previewSound(f); this.saveSettings(); },
+      onTournamentChange() { this.saveSettings(); this.updateTournamentLogo(); },
+      setBrandColor(t){ const color = this.tournaments[t]?.color || '#002855'; document.documentElement.style.setProperty('--brand-color', color); },
+      updateTournamentLogo() { const t = this.settings.tournament; this.tournamentLogo = this.tournaments[t]?.logo || ''; this.setBrandColor(t); },
+      previewSound(file) { if (!file) return; const a = new Audio(`/static/sounds/${file}`); a.volume = (this.settings.event_volume || 80) / 100; a.play().catch(() => {}); },
+
+      /* ===== Wi-Fi (Bluetooth-like UX) ===== */
+      refreshWifiStatus() {
+        axios.get('/wifi/scan').then(res => {
+          const data = res.data || {};
+          this.wifiNetworks = data.networks || [];
+          this.wifiStatus.connected = data.connected || null;
+        });
+      },
+      fetchWifi() {
+        axios.get('/wifi/scan').then(res => {
+          const data = res.data || {};
+          this.wifiNetworks = data.networks || [];
+          this.wifiStatus.connected = data.connected || null;
+        });
+      },
+      connectWifiPrompt(ssid) {
+        fetch('/launch_keyboard', { method: 'POST' }).catch(() => {});
+        const password = prompt(`Password for ${ssid} (leave blank if open)`, '');
+        fetch('/hide_keyboard', { method: 'POST' }).catch(() => {});
+        this.connectWifi(ssid, password || '');
+      },
+      connectWifi(ssid, password) {
+        axios.post('/wifi/connect', { ssid, password }).then(() => {
+          this.showToast(`Connecting to ${ssid}`, 'success');
+          // Refresh status and UI
+          this.refreshWifiStatus();
+          setTimeout(() => { this.wifiPopup = false; this.refreshWifiStatus(); }, 1200);
+        }).catch(err => {
+          const msg = err?.response?.data?.message || 'Failed to connect.';
+          this.showToast(`❌ ${msg}`, 'error');
+        });
+      },
+      disconnectWifi() {
+        axios.post('/wifi/disconnect').then(() => {
+          this.showToast('Disconnected from Wi-Fi', 'success');
+          this.refreshWifiStatus();
+          this.fetchWifi();
+        }).catch(err => {
+          const msg = err?.response?.data?.message || 'Disconnect failed.';
+          this.showToast(`❌ ${msg}`, 'error');
+        });
+      },
+
+      /* ===== Bluetooth ===== */
+      refreshBtStatus() {
+        axios.get('/bluetooth/status').then(res => { this.btStatus = res.data || {}; });
+      },
+      scanBluetooth() {
+        axios.get('/bluetooth/scan').then(res => {
+          this.bluetoothDevices = (res.data.devices || []);
+        });
+      },
+      connectBluetooth(mac) {
+        axios.post('/bluetooth/connect', { mac }).then(() => {
+          this.showToast('Connecting to device...', 'success');
+          this.refreshBtStatus();
+          this.scanBluetooth();
+          setTimeout(() => { this.bluetoothPopup = false; this.refreshBtStatus(); }, 1200);
+        }).catch(err => {
+          const msg = err?.response?.data?.message || 'Failed to connect.';
+          this.showToast(`❌ ${msg}`, 'error');
+        });
+      },
+      disconnectBluetooth(mac) {
+        axios.post('/bluetooth/disconnect', { mac }).then(() => {
+          this.showToast('Disconnected device', 'success');
+          this.refreshBtStatus(); this.scanBluetooth();
+        }).catch(err => {
+          const msg = err?.response?.data?.message || 'Disconnect failed.';
+          this.showToast(`❌ ${msg}`, 'error');
+        });
+      }
+    },
+    mounted() {
+      // Load saved settings
+      axios.get('/api/settings').then(res => {
+        this.settings = { ...this.settings, ...res.data };
+        if (res.data.sms_emails && Array.isArray(res.data.sms_emails)) {
+          this.recipients = res.data.sms_emails.map(email => ({ email }));
+        }
+        const storedFollowed = localStorage.getItem('followed_sound');
+        if (storedFollowed) this.settings.followed_sound = storedFollowed;
+        const storedBoated = localStorage.getItem('boated_sound');
+        if (storedBoated) this.settings.boated_sound = storedBoated;
+        const storedVol = localStorage.getItem('event_volume');
+        if (storedVol) this.settings.event_volume = parseInt(storedVol, 10);
+
+        axios.get('https://js9467.github.io/Brtourney/settings.json').then(res2 => {
+          this.fallbackStream = res2.data?.fallback_stream || '';
+          const entries = Object.entries(res2.data || {});
+          this.tournaments = Object.fromEntries(
+            entries.filter(([name, val]) =>
+              name !== 'fallback_stream' && val && typeof val === 'object' && !Array.isArray(val)
+            )
+          );
+          axios.get('/api/tournaments').then(res3 => {
+            this.apiTournamentLabels = res3.data?.tournaments || {};
+            if (!this.settings.tournament || !(this.settings.tournament in this.tournaments)) {
+              this.settings.tournament = '';
+            }
+            this.updateTournamentLogo();
+          }).catch(() => {
+            if (!this.settings.tournament || !(this.settings.tournament in this.tournaments)) {
+              this.settings.tournament = '';
+            }
+            this.updateTournamentLogo();
+          });
+        });
+      });
+
+      // Sounds
+      axios.get('/sounds').then(res => {
+        const files = res.data.files || [];
+        this.availableSounds = files.map(f => ({ name: f.replace(/\.[^.]+$/,''), file: f }));
+      }).catch(() => {
+        const fallback = ['airhorn.mp3', 'bell.mp3', 'cheer.mp3'];
+        this.availableSounds = fallback.map(f => ({ name: f.replace(/\.[^.]+$/,''), file: f }));
+      });
+
+      // Initial pulls
+      this.refreshWifiStatus();
+      this.refreshBtStatus();
+
+      // Poll statuses every 5s (Wi-Fi + Bluetooth)
+      setInterval(() => {
+        this.refreshWifiStatus();
+        this.refreshBtStatus();
+      }, 5000);
+    }
+  }).mount('#app');
+  </script>
+</body>
+</html>

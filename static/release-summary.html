@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Release Summary</title>
+  <script src="/static/js/offline.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/static/css/base.css">
+  <style>
+    .modal-bg { background-color: rgba(0, 0, 0, 0.6); }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans overflow-y-auto">
+<div id="app">
+
+  <!-- Header: Logo + Back -->
+  <header class="bg-brand-blue text-white flex items-center justify-between px-4 py-3 shadow-md">
+    <div class="flex items-center space-x-4">
+      <img v-if="tournamentLogo" :src="tournamentLogo" alt="Tournament Logo" class="h-14 drop-shadow" />
+      <span v-else class="text-white text-base">Loading Logo...</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 bg-blue-900/50 backdrop-blur-sm rounded-full px-4 py-2 shadow-md border border-yellow-400/70 animate-pulse-slow">
+        <button data-vhf-toggle class="px-4 py-2 w-28 sm:w-32 font-semibold border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-blue-900 transition shadow-md">VHF ON</button>
+        <div class="flex items-center gap-2 text-sm text-white flex-nowrap">
+          <span class="text-lg">🔊</span>
+          <input type="range" min="0" max="100" data-vhf-volume class="h-1 bg-yellow-400 rounded-lg appearance-none cursor-pointer w-24 sm:w-32 md:w-40 flex-shrink-0 accent-yellow-400">
+          <span data-vhf-volume-display class="w-8 text-right text-xs"></span>
+        </div>
+      </div>
+      <a href="/" class="px-4 py-2 text-white font-semibold border border-white rounded hover:bg-white hover:text-blue-900 transition">Back</a>
+    </div>
+  </header>
+
+  <!-- Demo Banner -->
+  <div v-if="demoMode" class="bg-yellow-400 text-black font-semibold p-2 text-center">
+    DEMO MODE — Data is simulated from a previous tournament
+  </div>
+
+  <!-- Summary Table + Charts -->
+  <div class="p-6 max-w-6xl mx-auto w-full">
+    <h1 class="text-2xl font-bold text-brand-blue mb-4">Release Summary</h1>
+
+    <div v-if="loading" class="text-gray-500 italic">Loading release summary...</div>
+    <div v-else>
+      <!-- Table -->
+      <table class="w-full border border-gray-300 bg-white rounded shadow-md overflow-hidden mb-8">
+        <thead class="bg-brand-blue text-white">
+          <tr>
+            <th class="p-2">Date</th>
+            <th class="p-2">Blue Marlin</th>
+            <th class="p-2">White Marlin</th>
+            <th class="p-2">Sailfish</th>
+            <th class="p-2">Total Releases</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="day in summary" :key="day.date" class="border-b hover:bg-gray-50 cursor-pointer" @click="openDrilldown(day.date)">
+            <td class="p-2 font-semibold">{{ formatDate(day.date) }}</td>
+            <td class="p-2 text-center">{{ day.blue_marlins }}</td>
+            <td class="p-2 text-center">{{ day.white_marlins }}</td>
+            <td class="p-2 text-center">{{ day.sailfish }}</td>
+            <td class="p-2 text-center font-bold">{{ day.total_releases }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Charts -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Stacked Bar Chart -->
+        <div class="bg-white rounded shadow-md p-4">
+          <h2 class="text-lg font-bold text-brand-blue mb-4">Daily Releases by Species</h2>
+          <canvas id="releaseChart" height="200"></canvas>
+        </div>
+
+        <!-- Line Chart -->
+        <div class="bg-white rounded shadow-md p-4">
+          <h2 class="text-lg font-bold text-brand-blue mb-4">Total Releases Trend</h2>
+          <canvas id="trendChart" height="200"></canvas>
+        </div>
+
+        <!-- Smaller Doughnut Chart -->
+        <div class="bg-white rounded shadow-md p-4 lg:col-span-2">
+          <h2 class="text-lg font-bold text-brand-blue mb-4">Cumulative Species Distribution</h2>
+          <div class="flex justify-center">
+            <canvas id="speciesChart" class="max-w-[200px]" height="120" width="120"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drilldown Modal -->
+  <div v-if="showModal" class="fixed inset-0 flex items-center justify-center modal-bg z-50">
+    <div class="bg-white rounded-lg p-6 w-11/12 max-w-5xl shadow-lg overflow-y-auto max-h-[90vh]">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-brand-blue">Releases for {{ formatDate(selectedDate) }}</h2>
+        <button @click="closeModal" class="text-gray-500 hover:text-red-500 text-xl font-bold">&times;</button>
+      </div>
+      <div v-if="drilldownLoading" class="text-gray-500 italic">Loading boat details...</div>
+      <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div v-for="boat in drilldownBoats" :key="boat.uid" class="bg-white rounded shadow p-4 flex flex-col items-center border hover:shadow-lg">
+          <img :src="boat.image || tournamentLogo" class="w-24 h-24 object-cover rounded mb-2" @error="e => e.target.src = tournamentLogo"/>
+          <div class="font-bold text-center mb-1">{{ boat.name }}</div>
+          <div class="text-sm text-gray-700 text-center leading-tight">
+            <div v-for="line in boat.fishLines" :key="line">{{ line }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      summary: [],
+      loading: true,
+      tournamentLogo: '',
+      demoMode: false,
+      charts: {},
+      showModal: false,
+      selectedDate: '',
+      drilldownBoats: [],
+      drilldownLoading: false,
+      boatImages: {},
+      allEvents: [],
+      participants: []
+    };
+  },
+  mounted() {
+    this.fetchSummary();
+    this.loadTournamentLogo();
+    this.loadParticipants();
+    setInterval(this.fetchSummary, 30000);
+  },
+  methods: {
+    async fetchSummary() {
+      try {
+        const summaryData = await fetch('/release-summary-data').then(r=>r.json());
+        this.summary = summaryData.summary || [];
+        this.demoMode = summaryData.demo_mode || false;
+        this.allEvents = summaryData.events || [];
+
+        if (this.demoMode) {
+          this.fabricateDemoData();
+        }
+
+        this.loading = false;
+        this.renderCharts();
+      } catch (err) {
+        console.error('❌ Failed to load release summary:', err);
+        this.loading = false;
+      }
+    },
+    fabricateDemoData() {
+      if (!this.summary.length) return;
+
+      const lastDateStr = this.summary.map(s=>s.date).sort().slice(-1)[0];
+      const lastDate = new Date(lastDateStr);
+      const fakeDays = 3;
+      const existingDates = new Set(this.summary.map(s=>s.date));
+
+      for (let i=1;i<=fakeDays;i++) {
+        const d = new Date(lastDate.getTime() + i*86400000);
+        const iso = d.toISOString().slice(0,10);
+
+        if (!existingDates.has(iso)) {
+          const blue = Math.floor(Math.random()*5)+1;
+          const white = Math.floor(Math.random()*4);
+          const sail = Math.floor(Math.random()*3);
+          const total = blue+white+sail;
+
+          this.summary.push({
+            date: iso,
+            blue_marlins: blue,
+            white_marlins: white,
+            sailfish: sail,
+            total_releases: total
+          });
+
+          // Pick random participants for fake events
+          for (let b=0;b<total;b++) {
+            const species = this.pickSpeciesWeighted(blue,white,sail);
+            const randBoat = this.participants.length
+              ? this.participants[Math.floor(Math.random()*this.participants.length)]
+              : { uid:`demo_boat_${b}`, boat:`Demo Boat ${b}` };
+
+            this.allEvents.push({
+              timestamp: `${iso}T${String(9+b).padStart(2,'0')}:0${Math.floor(Math.random()*6)}:00`,
+              event: "Released",
+              boat: randBoat.boat,
+              uid: randBoat.uid,
+              details: `Released a ${species.toLowerCase()}.`
+            });
+          }
+        }
+      }
+
+      this.summary.sort((a,b)=>a.date.localeCompare(b.date));
+    },
+    pickSpeciesWeighted(blue,white,sail){
+      const pool=[];
+      pool.push(...Array(blue).fill('Blue Marlin'));
+      pool.push(...Array(white).fill('White Marlin'));
+      pool.push(...Array(sail).fill('Sailfish'));
+      return pool[Math.floor(Math.random()*pool.length)] || 'Blue Marlin';
+    },
+    loadParticipants() {
+      fetch('/participants_data?limit=1000&offset=0')
+        .then(res => res.json())
+        .then(data => {
+          this.participants = data.participants || [];
+          const images = {};
+          for (const p of data.participants) {
+            images[p.uid] = p.image_path;
+          }
+          this.boatImages = images;
+        });
+    },
+    setBrandColor(t, cfg){
+      const color = cfg?.[t]?.color || '#002855';
+      document.documentElement.style.setProperty('--brand-color', color);
+    },
+    loadTournamentLogo() {
+      fetch('/api/settings')
+        .then(res => res.json())
+        .then(settings => {
+          const tournament = settings.tournament;
+          return fetch('https://js9467.github.io/Brtourney/settings.json')
+            .then(res => res.json())
+            .then(all => {
+              this.tournamentLogo = all[tournament]?.logo || '';
+              this.setBrandColor(tournament, all);
+            });
+        });
+    },
+    formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    },
+    renderCharts() {
+      if (!this.summary.length) return;
+      for (const key in this.charts) { this.charts[key].destroy(); }
+
+      const labels = this.summary.map(day => this.formatDate(day.date));
+      const blue = this.summary.map(day => day.blue_marlins);
+      const white = this.summary.map(day => day.white_marlins);
+      const sail = this.summary.map(day => day.sailfish);
+      const totals = this.summary.map(day => day.total_releases);
+
+      const anim = { duration: 800, easing: 'easeOutQuart' };
+
+      this.charts.releaseChart = new Chart(document.getElementById('releaseChart'), {
+        type: 'bar',
+        data: { labels, datasets: [
+          { label: 'Blue Marlin', data: blue, backgroundColor: '#3b82f6' },
+          { label: 'White Marlin', data: white, backgroundColor: '#a78bfa' },
+          { label: 'Sailfish', data: sail, backgroundColor: '#22c55e' }
+        ] },
+        options: { responsive: true, animation: anim, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
+      });
+
+      this.charts.trendChart = new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'Total Releases', data: totals, borderColor: '#f59e0b', backgroundColor: '#f59e0b33', fill: true, tension: 0.3 }] },
+        options: { responsive: true, animation: anim, scales: { y: { beginAtZero: true } } }
+      });
+
+      const totalBlue = blue.reduce((a,b)=>a+b,0);
+      const totalWhite = white.reduce((a,b)=>a+b,0);
+      const totalSail = sail.reduce((a,b)=>a+b,0);
+      this.charts.speciesChart = new Chart(document.getElementById('speciesChart'), {
+        type: 'doughnut',
+        data: { labels: ['Blue Marlin', 'White Marlin', 'Sailfish'], datasets: [{ data: [totalBlue,totalWhite,totalSail], backgroundColor: ['#3b82f6','#a78bfa','#22c55e'] }] },
+        options: { responsive: true, animation: { animateScale: true }, plugins: { legend: { position: 'bottom' } } }
+      });
+    },
+    openDrilldown(date) {
+      this.selectedDate = date;
+      this.showModal = true;
+      this.drilldownLoading = true;
+
+      const filtered = this.allEvents.filter(e =>
+        e.event.toLowerCase() === 'released' && e.timestamp.startsWith(date)
+      );
+
+      const boatMap = {};
+      for (const e of filtered) {
+        if (!boatMap[e.uid]) {
+          boatMap[e.uid] = { uid: e.uid, name: e.boat, image: this.getBoatImage(e.uid), fishCounts: {} };
+        }
+        const type = this.extractFishType(e.details);
+        boatMap[e.uid].fishCounts[type] = (boatMap[e.uid].fishCounts[type] || 0) + 1;
+      }
+
+      this.drilldownBoats = Object.values(boatMap)
+        .map(b => ({
+          uid: b.uid,
+          name: b.name,
+          image: b.image,
+          fishLines: Object.entries(b.fishCounts).map(([k,v]) => `${k} = ${v}`)
+        }))
+        .sort((a,b) => a.name.localeCompare(b.name));
+
+      this.drilldownLoading = false;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.selectedDate = '';
+      this.drilldownBoats = [];
+    },
+    getBoatImage(uid) {
+      return this.boatImages[uid] || this.tournamentLogo || '/static/images/bigrock.png';
+    },
+    extractFishType(details) {
+      details = details.toLowerCase();
+      if (details.includes('blue')) return 'Blue Marlin';
+      if (details.includes('white')) return 'White Marlin';
+      if (details.includes('sail')) return 'Sailfish';
+      return 'Billfish';
+    }
+  }
+}).mount('#app');
+</script>
+
+<audio id="radio-player" hidden></audio>
+<script src="/static/js/vhf.js"></script>
+
+</body>
+</html>

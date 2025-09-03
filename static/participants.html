@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Participants</title>
+  <script src="/static/js/offline.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <link rel="stylesheet" href="/static/css/base.css" />
+  <style>[v-cloak]{display:none}</style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans overflow-y-auto">
+  <div id="app" v-cloak>
+    <!-- Header -->
+    <header class="bg-brand-blue text-white flex items-center justify-between px-4 py-3 shadow-md">
+      <div class="flex items-center space-x-4">
+        <img v-if="tournamentLogo" :src="tournamentLogo" alt="Tournament Logo" class="h-14 drop-shadow" />
+        <span v-else class="text-white text-base">Loading Logo...</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 bg-blue-900/50 backdrop-blur-sm rounded-full px-4 py-2 shadow-md border border-yellow-400/70 animate-pulse-slow">
+          <button data-vhf-toggle class="px-4 py-2 w-28 sm:w-32 font-semibold border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-blue-900 transition shadow-md">VHF ON</button>
+          <div class="flex items-center gap-2 text-sm text-white flex-nowrap">
+            <span class="text-lg">🔊</span>
+            <input type="range" min="0" max="100" data-vhf-volume class="h-1 bg-yellow-400 rounded-lg appearance-none cursor-pointer w-24 sm:w-32 md:w-40 flex-shrink-0 accent-yellow-400">
+            <span data-vhf-volume-display class="w-8 text-right text-xs"></span>
+          </div>
+        </div>
+        <a href="/" class="px-4 py-2 text-white font-semibold border border-white rounded hover:bg-white hover:text-blue-900 transition">Back</a>
+      </div>
+    </header>
+
+    <div class="p-4 max-w-screen-xl mx-auto">
+
+      <!-- Followed Boats Section -->
+      <div v-if="followed.length" class="mb-6 bg-white p-4 rounded-xl shadow border border-yellow-300">
+        <div class="text-lg font-semibold text-yellow-700 mb-2">Followed Boats:</div>
+        <div class="flex flex-wrap gap-2">
+          <div v-for="boat in followed" :key="boat"
+               class="flex items-center bg-yellow-200 text-yellow-900 font-semibold px-3 py-1 rounded-full shadow-sm">
+            {{ boat }}
+            <button @click="toggleFollow(boat)" class="ml-2 text-red-600 hover:text-red-800 font-bold text-sm">❌</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heading and Controls -->
+      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h1 class="text-4xl font-bold text-yellow-600">Tournament Participants</h1>
+        <div class="flex gap-2 w-full sm:w-auto">
+          <input
+            v-model="search"
+            type="text"
+            placeholder="Search boats..."
+            class="px-4 py-2 border rounded w-full sm:w-64"
+            @focus="launchKeyboard"
+            @blur="hideKeyboard"
+          />
+        </div>
+      </header>
+
+      <!-- Grid of Participants -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div
+          v-for="p in filteredParticipants"
+          :key="p.uid"
+          class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden flex flex-col border-4"
+          :class="{
+            'border-green-500 bg-green-50': isFollowed(p.boat),
+            'border-transparent': !isFollowed(p.boat)
+          }"
+        >
+          <!-- Image -->
+          <div class="relative w-full h-48 bg-gray-200 flex items-center justify-center">
+            <div v-if="!p.loaded" class="absolute inset-0 flex items-center justify-center transition-opacity duration-500">
+              <svg class="animate-spin h-8 w-8 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+            </div>
+            <img
+              class="lazy w-full h-48 object-cover opacity-0 transition-opacity duration-500"
+              :data-src="p.image_path || tournamentLogo"
+              :data-uid="p.uid"
+              :src="tournamentLogo || '/static/images/bigrock.png'"
+              loading="lazy"
+              alt="Boat Image"
+            />
+          </div>
+
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h2 class="text-xl font-semibold truncate">{{ p.boat }}</h2>
+              <p class="text-sm text-gray-600 mb-3 truncate">{{ p.type || '' }}</p>
+            </div>
+            <button
+              @click="toggleFollow(p.boat)"
+              :class="{
+                'bg-green-600 hover:bg-green-700': isFollowed(p.boat),
+                'bg-gray-300 hover:bg-gray-400': !isFollowed(p.boat)
+              }"
+              class="px-4 py-1 text-white rounded w-full mt-2">
+              {{ isFollowed(p.boat) ? 'Following' : 'Follow' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Messages -->
+      <div v-if="!loading && filteredParticipants.length === 0" class="text-center py-6 text-red-600 text-sm">
+        No boats match your search.
+      </div>
+      <div v-if="loading" class="text-center py-6 text-gray-600 text-sm">
+        Loading boats...
+      </div>
+    </div>
+  </div>
+
+  <audio id="radio-player" hidden></audio>
+
+  <script src="/static/js/vhf.js"></script>
+
+  <script>
+  const app = Vue.createApp({
+    data() {
+      return {
+        participants: [],
+        followed: [],
+        tournamentLogo: '',
+        search: '',
+        loading: false,
+        pollInterval: null,
+      };
+    },
+    computed: {
+      filteredParticipants() {
+        const q = this.search.toLowerCase();
+        return this.participants.filter(p =>
+          (p.boat || '').toLowerCase().includes(q) ||
+          (p.type || '').toLowerCase().includes(q)
+        );
+      }
+    },
+    methods: {
+      setBrandColor(t, cfg){
+        const color = cfg?.[t]?.color || '#002855';
+        document.documentElement.style.setProperty('--brand-color', color);
+      },
+      async loadFollowed() {
+        try {
+          const res = await fetch('/followed-boats');
+          this.followed = await res.json();
+        } catch(e) {
+          console.error('Failed to load followed boats', e);
+        }
+      },
+      async toggleFollow(boat) {
+        try {
+          const res = await fetch('/followed-boats/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ boat })
+          });
+          const data = await res.json();
+          if (data.status === 'ok') {
+            this.followed = data.followed_boats;
+          }
+        } catch(e) {
+          console.error('Toggle follow failed', e);
+        }
+      },
+      isFollowed(boat) {
+        const uid = boat.toLowerCase().replace(/[' ]/g, "_");
+        return this.followed.some(b => b.toLowerCase().replace(/[' ]/g, "_") === uid);
+      },
+      async loadParticipants() {
+        this.loading = true;
+        try {
+          const res = await fetch('/participants_data');
+          const data = await res.json();
+          this.participants = (data.participants || []).map(p => ({
+            ...p,
+            loaded: false
+          })).sort((a,b)=>a.boat.localeCompare(b.boat));
+        } catch(e) {
+          console.error('Failed to load participants', e);
+        } finally {
+          this.loading = false;
+          this.$nextTick(() => this.initLazyLoading());
+        }
+      },
+      async loadLogo() {
+        try {
+          const settingsRes = await fetch('/api/settings');
+          const settings = await settingsRes.json();
+          const tournament = settings.tournament;
+          const configRes = await fetch('https://js9467.github.io/Brtourney/settings.json');
+          const allTournaments = await configRes.json();
+          this.tournamentLogo = allTournaments[tournament]?.logo || '';
+          this.setBrandColor(tournament, allTournaments);
+        } catch(e) { console.error('Logo load failed', e); }
+      },
+      launchKeyboard() {
+        fetch('/launch_keyboard', { method: 'POST' }).catch(() => {});
+      },
+      hideKeyboard() {
+        fetch('/hide_keyboard', { method: 'POST' }).catch(() => {});
+      },
+
+      initLazyLoading() {
+        const images = document.querySelectorAll('img.lazy');
+        if (!images.length) return;
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.dataset.src || this.tournamentLogo || '/static/images/bigrock.png';
+              img.onload = () => {
+                img.classList.add('opacity-100');
+                const uid = img.getAttribute('data-uid');
+                if (uid) {
+                  const participant = this.participants.find(p => p.uid === uid);
+                  if (participant) participant.loaded = true;
+                }
+              };
+              observer.unobserve(img);
+            }
+          });
+        }, { threshold: 0.1 });
+        images.forEach(img => observer.observe(img));
+      },
+
+      startPolling() {
+        this.pollInterval = setInterval(async () => {
+          try {
+            const res = await fetch('/participants_data');
+            const data = await res.json();
+            const updated = (data.participants || []).map(p => {
+              const existing = this.participants.find(x => x.uid === p.uid);
+              return { ...p, loaded: existing ? existing.loaded : false };
+            }).sort((a,b)=>a.boat.localeCompare(b.boat));
+            this.participants = updated;
+            this.$nextTick(() => this.initLazyLoading());
+          } catch(e) {
+            console.error('Polling failed', e);
+          }
+        }, 5000);
+      }
+    },
+    mounted() {
+      this.loadLogo();
+      this.loadParticipants();
+      this.loadFollowed();
+      this.startPolling();
+    },
+    beforeUnmount() { if (this.pollInterval) clearInterval(this.pollInterval); }
+  });
+  app.mount('#app');
+  </script>
+</body>
+</html>

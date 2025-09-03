@@ -1,0 +1,1402 @@
+[
+  {
+    "timestamp": "2025-06-13T17:47:00",
+    "event": "Other",
+    "boat": "Developin Habits",
+    "uid": "developin_habits",
+    "details": "Evan Kleinhans weighed a 16.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T17:47:00",
+    "event": "Other",
+    "boat": "Developin Habits",
+    "uid": "developin_habits",
+    "details": "Evan Kleinhans weighed a 16.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T17:47:00",
+    "event": "Other",
+    "boat": "Developin Habits",
+    "uid": "developin_habits",
+    "details": "Evan Kleinhans weighed a 16.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T17:47:00",
+    "event": "Other",
+    "boat": "Developin Habits",
+    "uid": "developin_habits",
+    "details": "Evan Kleinhans weighed a 16.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T17:49:00",
+    "event": "Other",
+    "boat": "Traveller",
+    "uid": "traveller",
+    "details": "Zach Dougher weighed a 11.1 lbs wahoo"
+  },
+  {
+    "timestamp": "2025-06-13T17:49:00",
+    "event": "Other",
+    "boat": "Traveller",
+    "uid": "traveller",
+    "details": "Zach Dougher weighed a 11.1 lbs wahoo"
+  },
+  {
+    "timestamp": "2025-06-13T17:49:00",
+    "event": "Other",
+    "boat": "Traveller",
+    "uid": "traveller",
+    "details": "Zach Dougher weighed a 11.1 lbs wahoo"
+  },
+  {
+    "timestamp": "2025-06-13T17:49:00",
+    "event": "Other",
+    "boat": "Traveller",
+    "uid": "traveller",
+    "details": "Zach Dougher weighed a 11.1 lbs wahoo"
+  },
+  {
+    "timestamp": "2025-06-13T18:06:00",
+    "event": "Other",
+    "boat": "Labrador",
+    "uid": "labrador",
+    "details": "Collins Walston weighed a 20.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:06:00",
+    "event": "Other",
+    "boat": "Labrador",
+    "uid": "labrador",
+    "details": "Collins Walston weighed a 20.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:06:00",
+    "event": "Other",
+    "boat": "Labrador",
+    "uid": "labrador",
+    "details": "Collins Walston weighed a 20.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:06:00",
+    "event": "Other",
+    "boat": "Labrador",
+    "uid": "labrador",
+    "details": "Collins Walston weighed a 20.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:09:00",
+    "event": "Other",
+    "boat": "Ocean Lifter",
+    "uid": "ocean_lifter",
+    "details": "Jennings Bunch weighed a 11.8 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:09:00",
+    "event": "Other",
+    "boat": "Ocean Lifter",
+    "uid": "ocean_lifter",
+    "details": "Jennings Bunch weighed a 11.8 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:09:00",
+    "event": "Other",
+    "boat": "Ocean Lifter",
+    "uid": "ocean_lifter",
+    "details": "Jennings Bunch weighed a 11.8 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:09:00",
+    "event": "Other",
+    "boat": "Ocean Lifter",
+    "uid": "ocean_lifter",
+    "details": "Jennings Bunch weighed a 11.8 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:26:00",
+    "event": "Other",
+    "boat": "Superflat",
+    "uid": "superflat",
+    "details": "Faith Jones weighed a 9.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:26:00",
+    "event": "Other",
+    "boat": "Superflat",
+    "uid": "superflat",
+    "details": "Faith Jones weighed a 9.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:26:00",
+    "event": "Other",
+    "boat": "Superflat",
+    "uid": "superflat",
+    "details": "Faith Jones weighed a 9.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T18:26:00",
+    "event": "Other",
+    "boat": "Superflat",
+    "uid": "superflat",
+    "details": "Faith Jones weighed a 9.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-13T19:15:00",
+    "event": "Boated",
+    "boat": "Southern Grace",
+    "uid": "southern_grace",
+    "details": "Boated a dq'd blue marlin"
+  },
+  {
+    "timestamp": "2025-06-14T09:10:00",
+    "event": "Released",
+    "boat": "Unbridled",
+    "uid": "unbridled",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:10:00",
+    "event": "Released",
+    "boat": "Unbridled",
+    "uid": "unbridled",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:10:00",
+    "event": "Released",
+    "boat": "Unbridled",
+    "uid": "unbridled",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:10:00",
+    "event": "Released",
+    "boat": "Unbridled",
+    "uid": "unbridled",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:11:00",
+    "event": "Released",
+    "boat": "Ann Warrick",
+    "uid": "ann_warrick",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:11:00",
+    "event": "Released",
+    "boat": "Ann Warrick",
+    "uid": "ann_warrick",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:11:00",
+    "event": "Released",
+    "boat": "Ann Warrick",
+    "uid": "ann_warrick",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:11:00",
+    "event": "Released",
+    "boat": "Ann Warrick",
+    "uid": "ann_warrick",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:30:00",
+    "event": "Released",
+    "boat": "Retriever - Chadwick",
+    "uid": "retriever_-_chadwick",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T09:30:00",
+    "event": "Released",
+    "boat": "Retriever - Chadwick",
+    "uid": "retriever_-_chadwick",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T09:30:00",
+    "event": "Released",
+    "boat": "Retriever - Chadwick",
+    "uid": "retriever_-_chadwick",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T09:30:00",
+    "event": "Released",
+    "boat": "Retriever - Chadwick",
+    "uid": "retriever_-_chadwick",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T09:40:00",
+    "event": "Released",
+    "boat": "Reel Development",
+    "uid": "reel_development",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:40:00",
+    "event": "Released",
+    "boat": "Reel Development",
+    "uid": "reel_development",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:40:00",
+    "event": "Released",
+    "boat": "Reel Development",
+    "uid": "reel_development",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:40:00",
+    "event": "Released",
+    "boat": "Reel Development",
+    "uid": "reel_development",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:44:00",
+    "event": "Released",
+    "boat": "Taylor Jean",
+    "uid": "taylor_jean",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:44:00",
+    "event": "Released",
+    "boat": "Taylor Jean",
+    "uid": "taylor_jean",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:44:00",
+    "event": "Released",
+    "boat": "Taylor Jean",
+    "uid": "taylor_jean",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T09:44:00",
+    "event": "Released",
+    "boat": "Taylor Jean",
+    "uid": "taylor_jean",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:01:00",
+    "event": "Released",
+    "boat": "Sweet Spot",
+    "uid": "sweet_spot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T10:01:00",
+    "event": "Released",
+    "boat": "Sweet Spot",
+    "uid": "sweet_spot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T10:01:00",
+    "event": "Released",
+    "boat": "Sweet Spot",
+    "uid": "sweet_spot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T10:01:00",
+    "event": "Released",
+    "boat": "Sweet Spot",
+    "uid": "sweet_spot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T10:12:00",
+    "event": "Pulled Hook",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:12:00",
+    "event": "Pulled Hook",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:12:00",
+    "event": "Pulled Hook",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:12:00",
+    "event": "Pulled Hook",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:13:00",
+    "event": "Wrong Species",
+    "boat": "Never Enough",
+    "uid": "never_enough",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T10:13:00",
+    "event": "Wrong Species",
+    "boat": "Never Enough",
+    "uid": "never_enough",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T10:13:00",
+    "event": "Wrong Species",
+    "boat": "Never Enough",
+    "uid": "never_enough",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T10:13:00",
+    "event": "Wrong Species",
+    "boat": "Never Enough",
+    "uid": "never_enough",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T10:14:00",
+    "event": "Pulled Hook",
+    "boat": "Kraken",
+    "uid": "kraken",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:14:00",
+    "event": "Pulled Hook",
+    "boat": "Kraken",
+    "uid": "kraken",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:14:00",
+    "event": "Pulled Hook",
+    "boat": "Kraken",
+    "uid": "kraken",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:14:00",
+    "event": "Pulled Hook",
+    "boat": "Kraken",
+    "uid": "kraken",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T10:25:00",
+    "event": "Released",
+    "boat": "Horse Play",
+    "uid": "horse_play",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:25:00",
+    "event": "Released",
+    "boat": "Horse Play",
+    "uid": "horse_play",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:25:00",
+    "event": "Released",
+    "boat": "Horse Play",
+    "uid": "horse_play",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:25:00",
+    "event": "Released",
+    "boat": "Horse Play",
+    "uid": "horse_play",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:26:00",
+    "event": "Released",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:26:00",
+    "event": "Released",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:26:00",
+    "event": "Released",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:26:00",
+    "event": "Released",
+    "boat": "Dun-Rite",
+    "uid": "dun-rite",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "Trash Man",
+    "uid": "trash_man",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "JACK EM UP",
+    "uid": "jack_em_up",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "Trash Man",
+    "uid": "trash_man",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "JACK EM UP",
+    "uid": "jack_em_up",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "Trash Man",
+    "uid": "trash_man",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "JACK EM UP",
+    "uid": "jack_em_up",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "Trash Man",
+    "uid": "trash_man",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T10:35:00",
+    "event": "Released",
+    "boat": "JACK EM UP",
+    "uid": "jack_em_up",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:06:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:06:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:06:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:06:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:09:00",
+    "event": "Pulled Hook",
+    "boat": "Demolished Profits",
+    "uid": "demolished_profits",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T11:09:00",
+    "event": "Pulled Hook",
+    "boat": "Demolished Profits",
+    "uid": "demolished_profits",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T11:09:00",
+    "event": "Pulled Hook",
+    "boat": "Demolished Profits",
+    "uid": "demolished_profits",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T11:09:00",
+    "event": "Pulled Hook",
+    "boat": "Demolished Profits",
+    "uid": "demolished_profits",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T11:27:00",
+    "event": "Released",
+    "boat": "Waste Knot",
+    "uid": "waste_knot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T11:27:00",
+    "event": "Released",
+    "boat": "Waste Knot",
+    "uid": "waste_knot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T11:27:00",
+    "event": "Released",
+    "boat": "Waste Knot",
+    "uid": "waste_knot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T11:27:00",
+    "event": "Released",
+    "boat": "Waste Knot",
+    "uid": "waste_knot",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T11:43:00",
+    "event": "Released",
+    "boat": "Big B",
+    "uid": "big_b",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:43:00",
+    "event": "Released",
+    "boat": "Big B",
+    "uid": "big_b",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:43:00",
+    "event": "Released",
+    "boat": "Big B",
+    "uid": "big_b",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T11:43:00",
+    "event": "Released",
+    "boat": "Big B",
+    "uid": "big_b",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:00:00",
+    "event": "Released",
+    "boat": "Strokin'",
+    "uid": "strokin",
+    "details": "Steve Ash Jr. released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:00:00",
+    "event": "Released",
+    "boat": "Strokin'",
+    "uid": "strokin",
+    "details": "Steve Ash Jr. released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:00:00",
+    "event": "Released",
+    "boat": "Strokin'",
+    "uid": "strokin",
+    "details": "Steve Ash Jr. released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:00:00",
+    "event": "Released",
+    "boat": "Strokin'",
+    "uid": "strokin",
+    "details": "Steve Ash Jr. released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:11:00",
+    "event": "Pulled Hook",
+    "boat": "Sandbob",
+    "uid": "sandbob",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:11:00",
+    "event": "Pulled Hook",
+    "boat": "Sandbob",
+    "uid": "sandbob",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:11:00",
+    "event": "Pulled Hook",
+    "boat": "Sandbob",
+    "uid": "sandbob",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:11:00",
+    "event": "Pulled Hook",
+    "boat": "Sandbob",
+    "uid": "sandbob",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:25:00",
+    "event": "Boated",
+    "boat": "Big Trouble",
+    "uid": "big_trouble",
+    "details": "Boated a blue marlin"
+  },
+  {
+    "timestamp": "2025-06-14T12:25:00",
+    "event": "Boated",
+    "boat": "Big Trouble",
+    "uid": "big_trouble",
+    "details": "Boated a blue marlin"
+  },
+  {
+    "timestamp": "2025-06-14T12:25:00",
+    "event": "Boated",
+    "boat": "Big Trouble",
+    "uid": "big_trouble",
+    "details": "Boated a blue marlin"
+  },
+  {
+    "timestamp": "2025-06-14T12:25:00",
+    "event": "Boated",
+    "boat": "Big Trouble",
+    "uid": "big_trouble",
+    "details": "Boated a blue marlin"
+  },
+  {
+    "timestamp": "2025-06-14T12:34:00",
+    "event": "Released",
+    "boat": "MJs",
+    "uid": "mjs",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T12:34:00",
+    "event": "Released",
+    "boat": "MJs",
+    "uid": "mjs",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T12:34:00",
+    "event": "Released",
+    "boat": "MJs",
+    "uid": "mjs",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T12:34:00",
+    "event": "Released",
+    "boat": "MJs",
+    "uid": "mjs",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T12:36:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:36:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:36:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:36:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:43:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:43:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:43:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:43:00",
+    "event": "Released",
+    "boat": "Hammer Time",
+    "uid": "hammer_time",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T12:46:00",
+    "event": "Pulled Hook",
+    "boat": "Catch 23",
+    "uid": "catch_23",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:46:00",
+    "event": "Pulled Hook",
+    "boat": "Catch 23",
+    "uid": "catch_23",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:46:00",
+    "event": "Pulled Hook",
+    "boat": "Catch 23",
+    "uid": "catch_23",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:46:00",
+    "event": "Pulled Hook",
+    "boat": "Catch 23",
+    "uid": "catch_23",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:56:00",
+    "event": "Pulled Hook",
+    "boat": "RoShamBo",
+    "uid": "roshambo",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:56:00",
+    "event": "Pulled Hook",
+    "boat": "RoShamBo",
+    "uid": "roshambo",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:56:00",
+    "event": "Pulled Hook",
+    "boat": "RoShamBo",
+    "uid": "roshambo",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T12:56:00",
+    "event": "Pulled Hook",
+    "boat": "RoShamBo",
+    "uid": "roshambo",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T13:25:00",
+    "event": "Wrong Species",
+    "boat": "Citation",
+    "uid": "citation",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T13:25:00",
+    "event": "Wrong Species",
+    "boat": "Citation",
+    "uid": "citation",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T13:25:00",
+    "event": "Wrong Species",
+    "boat": "Citation",
+    "uid": "citation",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T13:25:00",
+    "event": "Wrong Species",
+    "boat": "Citation",
+    "uid": "citation",
+    "details": "Lost (Wrong Species)."
+  },
+  {
+    "timestamp": "2025-06-14T14:14:00",
+    "event": "Pulled Hook",
+    "boat": "Play It By Ear",
+    "uid": "play_it_by_ear",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:14:00",
+    "event": "Pulled Hook",
+    "boat": "Play It By Ear",
+    "uid": "play_it_by_ear",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:14:00",
+    "event": "Pulled Hook",
+    "boat": "Play It By Ear",
+    "uid": "play_it_by_ear",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:14:00",
+    "event": "Pulled Hook",
+    "boat": "Play It By Ear",
+    "uid": "play_it_by_ear",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:21:00",
+    "event": "Released",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:21:00",
+    "event": "Released",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:21:00",
+    "event": "Released",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:21:00",
+    "event": "Released",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:23:00",
+    "event": "Released",
+    "boat": "Byte Me",
+    "uid": "byte_me",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:23:00",
+    "event": "Released",
+    "boat": "Byte Me",
+    "uid": "byte_me",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:23:00",
+    "event": "Released",
+    "boat": "Byte Me",
+    "uid": "byte_me",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:23:00",
+    "event": "Released",
+    "boat": "Byte Me",
+    "uid": "byte_me",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:31:00",
+    "event": "Pulled Hook",
+    "boat": "Hatteras Fever II",
+    "uid": "hatteras_fever_ii",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:31:00",
+    "event": "Pulled Hook",
+    "boat": "Hatteras Fever II",
+    "uid": "hatteras_fever_ii",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:31:00",
+    "event": "Pulled Hook",
+    "boat": "Hatteras Fever II",
+    "uid": "hatteras_fever_ii",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:31:00",
+    "event": "Pulled Hook",
+    "boat": "Hatteras Fever II",
+    "uid": "hatteras_fever_ii",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:34:00",
+    "event": "Pulled Hook",
+    "boat": "Big Hunter",
+    "uid": "big_hunter",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:34:00",
+    "event": "Pulled Hook",
+    "boat": "Big Hunter",
+    "uid": "big_hunter",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:34:00",
+    "event": "Pulled Hook",
+    "boat": "Big Hunter",
+    "uid": "big_hunter",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:34:00",
+    "event": "Pulled Hook",
+    "boat": "Big Hunter",
+    "uid": "big_hunter",
+    "details": "Lost (Pulled Hook)."
+  },
+  {
+    "timestamp": "2025-06-14T14:54:00",
+    "event": "Released",
+    "boat": "Carolina Pirate",
+    "uid": "carolina_pirate",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T14:54:00",
+    "event": "Released",
+    "boat": "Carolina Pirate",
+    "uid": "carolina_pirate",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T14:54:00",
+    "event": "Released",
+    "boat": "Carolina Pirate",
+    "uid": "carolina_pirate",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T14:54:00",
+    "event": "Released",
+    "boat": "Carolina Pirate",
+    "uid": "carolina_pirate",
+    "details": "Released a sailfish."
+  },
+  {
+    "timestamp": "2025-06-14T14:55:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:55:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:55:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:55:00",
+    "event": "Released",
+    "boat": "More Bills",
+    "uid": "more_bills",
+    "details": "Released a white marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:59:00",
+    "event": "Released",
+    "boat": "Shotski",
+    "uid": "shotski",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:59:00",
+    "event": "Released",
+    "boat": "Shotski",
+    "uid": "shotski",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:59:00",
+    "event": "Released",
+    "boat": "Shotski",
+    "uid": "shotski",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T14:59:00",
+    "event": "Released",
+    "boat": "Shotski",
+    "uid": "shotski",
+    "details": "Released a blue marlin."
+  },
+  {
+    "timestamp": "2025-06-14T16:58:00",
+    "event": "Other",
+    "boat": "Southern C's",
+    "uid": "southern_cs",
+    "details": "Mike Keaty weighed a 30.2 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T16:58:00",
+    "event": "Other",
+    "boat": "Southern C's",
+    "uid": "southern_cs",
+    "details": "Mike Keaty weighed a 30.2 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T16:58:00",
+    "event": "Other",
+    "boat": "Southern C's",
+    "uid": "southern_cs",
+    "details": "Mike Keaty weighed a 30.2 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T16:58:00",
+    "event": "Other",
+    "boat": "Southern C's",
+    "uid": "southern_cs",
+    "details": "Mike Keaty weighed a 30.2 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:03:00",
+    "event": "Other",
+    "boat": "Double B",
+    "uid": "double_b",
+    "details": "Aubry Peader weighed a 23.3 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:03:00",
+    "event": "Other",
+    "boat": "Double B",
+    "uid": "double_b",
+    "details": "Aubry Peader weighed a 23.3 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:03:00",
+    "event": "Other",
+    "boat": "Double B",
+    "uid": "double_b",
+    "details": "Aubry Peader weighed a 23.3 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:03:00",
+    "event": "Other",
+    "boat": "Double B",
+    "uid": "double_b",
+    "details": "Aubry Peader weighed a 23.3 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:27:00",
+    "event": "Other",
+    "boat": "Knot Right",
+    "uid": "knot_right",
+    "details": "Justin Jones weighed a 13.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:27:00",
+    "event": "Other",
+    "boat": "Knot Right",
+    "uid": "knot_right",
+    "details": "Justin Jones weighed a 13.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:27:00",
+    "event": "Other",
+    "boat": "Knot Right",
+    "uid": "knot_right",
+    "details": "Justin Jones weighed a 13.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:27:00",
+    "event": "Other",
+    "boat": "Knot Right",
+    "uid": "knot_right",
+    "details": "Justin Jones weighed a 13.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:39:00",
+    "event": "Other",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Eli Gray weighed a 15.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:39:00",
+    "event": "Other",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Eli Gray weighed a 15.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:39:00",
+    "event": "Other",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Eli Gray weighed a 15.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:39:00",
+    "event": "Other",
+    "boat": "Pelagic",
+    "uid": "pelagic",
+    "details": "Eli Gray weighed a 15.4 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:50:00",
+    "event": "Other",
+    "boat": "Speculator",
+    "uid": "speculator",
+    "details": "Jeff Leerink weighed a 30.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:50:00",
+    "event": "Other",
+    "boat": "Speculator",
+    "uid": "speculator",
+    "details": "Jeff Leerink weighed a 30.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:50:00",
+    "event": "Other",
+    "boat": "Speculator",
+    "uid": "speculator",
+    "details": "Jeff Leerink weighed a 30.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:50:00",
+    "event": "Other",
+    "boat": "Speculator",
+    "uid": "speculator",
+    "details": "Jeff Leerink weighed a 30.6 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:56:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Tyler Sampson weighed a 22.7 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:56:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Tyler Sampson weighed a 22.7 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:56:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Tyler Sampson weighed a 22.7 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:56:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Tyler Sampson weighed a 22.7 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:58:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Jeremy Wilson weighed a 18.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:58:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Jeremy Wilson weighed a 18.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:58:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Jeremy Wilson weighed a 18.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T17:58:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Jeremy Wilson weighed a 18.9 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:00:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Randy Anders weighed a 21.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:00:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Randy Anders weighed a 21.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:00:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Randy Anders weighed a 21.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:00:00",
+    "event": "Other",
+    "boat": "Blind Hunter",
+    "uid": "blind_hunter",
+    "details": "Randy Anders weighed a 21.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:15:00",
+    "event": "Other",
+    "boat": "Watertight",
+    "uid": "watertight",
+    "details": "Chris Forsyth weighed a 14.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:15:00",
+    "event": "Other",
+    "boat": "Watertight",
+    "uid": "watertight",
+    "details": "Chris Forsyth weighed a 14.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:15:00",
+    "event": "Other",
+    "boat": "Watertight",
+    "uid": "watertight",
+    "details": "Chris Forsyth weighed a 14.0 lbs dolphin"
+  },
+  {
+    "timestamp": "2025-06-14T18:15:00",
+    "event": "Other",
+    "boat": "Watertight",
+    "uid": "watertight",
+    "details": "Chris Forsyth weighed a 14.0 lbs dolphin"
+  }
+]

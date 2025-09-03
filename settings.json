@@ -1,0 +1,8 @@
+{
+    "tournament": "Big Rock",
+    "data_source": "demo",
+    "refresh_interval": 30,
+    "event_volume": 80,
+    "vhf_volume": 70,
+    "sounds_enabled": true
+}

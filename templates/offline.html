@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Join a Wi-Fi Network for Tournament Updates</title>
+  <link rel="stylesheet" href="/static/css/base.css">
+  <style>
+    :root{
+      --brand-blue:#0a2146;
+      --brand-gold:#d4af37;
+      --bg:#0b1220;
+      --card:#101a2e;
+      --card-border:#1e2b4a;
+      --text:#e8eefc;
+      --muted:#a9b7d9;
+      --success:#35b36a;
+      --focus:#4c86ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:Barlow, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      display:flex; flex-direction:column;
+    }
+
+    /* Header (text only, on-brand) */
+    .header{
+      background:var(--brand-blue); color:#fff;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .header h1{margin:0; font-size:1.1rem; font-weight:700; letter-spacing:.2px}
+    .header p{margin:.25rem 0 0; color:#d7def2; font-size:.92rem}
+    .header .right{display:flex; gap:8px; align-items:center}
+    .btn{
+      background:#152342; color:#fff; border:1px solid rgba(255,255,255,.12);
+      padding:8px 12px; border-radius:10px; font-weight:600; cursor:pointer;
+    }
+    .btn:focus{outline:2px solid var(--focus); outline-offset:2px}
+    .btn.primary{background:var(--brand-blue)}
+
+    .wrap{width:100%; max-width:980px; margin:0 auto; padding:18px 16px 28px}
+    .notice{
+      background:rgba(212,175,55,.08); border:1px solid rgba(212,175,55,.3);
+      color:#ffe7a6; border-radius:12px; padding:10px 12px; font-weight:600; text-align:center; margin-bottom:14px;
+    }
+
+    /* Layout: list + feature image */
+    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:16px}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+
+    .list{display:grid; gap:10px}
+    .card{background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:12px; display:grid; gap:10px}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+    .ssid{display:flex; align-items:center; gap:10px; font-weight:700}
+    .badge{font-size:.78rem; padding:4px 8px; border-radius:999px; background:#121c31; border:1px solid var(--card-border); color:var(--muted)}
+    .badge.connected{color:#c9f7dc; border-color:rgba(53,179,106,.35); background:rgba(53,179,106,.1)}
+    .badge.secured{color:#e0defd; border-color:rgba(125,102,240,.35); background:rgba(125,102,240,.10)}
+    .badge.open{color:#e9f8ff; border-color:rgba(90,185,230,.35); background:rgba(90,185,230,.10)}
+
+    .bars{display:inline-flex; align-items:flex-end; gap:3px; margin-right:6px}
+    .bar{width:4px; height:6px; background:#415378; border-radius:2px; opacity:.6}
+    .bar.on{background:#a6c3ff; opacity:1}
+    .bar.b2{height:9px} .bar.b3{height:12px} .bar.b4{height:15px} .bar.b5{height:18px}
+    .status{color:var(--muted); text-align:center; margin-top:6px; min-height:1.2em}
+    .spinner{width:14px; height:14px; border:2px solid rgba(255,255,255,.25); border-top-color:#fff; border-radius:50%; animation:spin 1s linear infinite; display:inline-block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Feature image card (Palmer Lou) */
+    .feature{background:var(--card); border:1px solid var(--card-border); border-radius:16px; overflow:hidden}
+    .feature .imagewrap{position:relative; width:100%; aspect-ratio:16/10; background:#0d1730}
+    .feature img{width:100%; height:100%; object-fit:cover; display:block; opacity:0; transform:scale(1.02); transition:opacity 600ms ease, transform 1200ms ease}
+    .feature img.loaded{opacity:1; transform:scale(1)}
+    .feature .caption{padding:10px 12px; color:var(--muted); font-size:.9rem; border-top:1px solid var(--card-border)}
+
+    /* ===== Top-sheet modal for Connect (stays above keyboard) ===== */
+    .sheet-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.45);
+      display:none; align-items:flex-start; justify-content:center;
+      z-index: 9999;
+    }
+    .sheet{
+      margin-top: 8px; /* near top so keyboard won't cover it */
+      background:var(--card); border:1px solid var(--card-border); border-radius:16px;
+      width:min(640px, calc(100% - 20px)); padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.35);
+      transform:translateY(-8px); opacity:0; transition:opacity .18s ease, transform .18s ease;
+    }
+    .sheet-backdrop.show{display:flex}
+    .sheet.show{transform:translateY(0); opacity:1}
+    .sheet-header{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px}
+    .sheet-title{display:flex; align-items:center; gap:10px; font-weight:700}
+    .sheet-body{display:grid; gap:10px}
+    .input-row{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center}
+    .text{
+      width:100%; padding:12px; border-radius:12px; background:#0c152a;
+      border:1px solid var(--card-border); color:var(--text); font-size:1.05rem;
+    }
+    .toggle-eye{
+      width:48px; height:48px; border-radius:12px; border:1px solid var(--card-border);
+      background:#12203f; color:#cdd9f6; cursor:pointer; display:grid; place-items:center; font-size:18px; user-select:none;
+    }
+    .show-pass{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.95rem}
+    .sheet-actions{display:flex; gap:10px; justify-content:flex-end; align-items:center}
+    .btn.big{padding:12px 16px; border-radius:12px; font-size:1rem; font-weight:700}
+    .hint-mini{color:var(--muted); font-size:.85rem}
+
+    .header, .sheet{padding-left:calc(12px + env(safe-area-inset-left)); padding-right:calc(12px + env(safe-area-inset-right))}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div>
+      <h1>Join a Wi-Fi Network for Live Tournament Updates</h1>
+      <p>You’re currently offline. Connect below to resume real-time feeds.</p>
+    </div>
+    <div class="right">
+      <button class="btn" id="btn-scan" type="button" title="Scan">Scan</button>
+      <button class="btn" id="btn-refresh" type="button" title="Refresh">Refresh</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="notice">Once connected to an active network connection, you will be directed to the tournament feed! </div>
+
+    <section class="grid">
+      <!-- Left: networks -->
+      <div>
+        <div class="list" id="networks" role="list">
+          <div class="card"><span class="spinner"></span> Scanning for nearby networks…</div>
+        </div>
+        <div class="status" id="status" aria-live="polite"></div>
+      </div>
+
+      <!-- Right: Palmer Lou feature (with solid fallback) -->
+      <aside id="palmerFeature" class="feature" aria-label="Palmer Lou">
+        <div class="imagewrap">
+          <img id="palmerImg" alt="Palmer Lou">
+        </div>
+        <div class="caption">Be sure to check the settings page for active fishing tournaments!</div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Top-sheet Connect Modal -->
+  <div id="sheetBackdrop" class="sheet-backdrop" aria-modal="true" role="dialog" aria-labelledby="sheetTitle">
+    <div class="sheet" id="sheet">
+      <div class="sheet-header">
+        <div class="sheet-title" id="sheetTitle">
+          <span id="sheetSignalBars" class="bars" aria-hidden="true"></span>
+          <span id="sheetSSID">SSID</span>
+          <span id="sheetSec" class="badge" style="margin-left:6px">Security: detected</span>
+        </div>
+        <button class="btn" id="sheetClose" type="button" aria-label="Close">Back</button>
+      </div>
+      <div class="sheet-body">
+        <div class="input-row">
+          <!-- ALWAYS enabled & password-capable -->
+          <input id="sheetPw" class="text" type="password" placeholder="Enter password (leave blank if open)">
+          <button id="sheetEye" class="toggle-eye" type="button" title="Show/Hide password">👁</button>
+        </div>
+        <label class="show-pass">
+          <input id="sheetShowCb" type="checkbox"> Show password while typing
+        </label>
+        <div class="sheet-actions">
+          <span class="hint-mini" id="sheetHint"></span>
+          <button class="btn big primary" id="sheetJoin" type="button">Join</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Robust image loader for Palmer Lou (webp -> jpg -> hide) */
+    (function loadPalmer(){
+      const feature = document.getElementById('palmerFeature');
+      const img = document.getElementById('palmerImg');
+      if (!img || !feature) return;
+      const sources = ['/static/images/palmer_lou.webp', '/static/images/palmer_lou.jpg'];
+      let i = 0;
+      const tryNext = () => {
+        if (i >= sources.length){ feature.style.display = 'none'; return; }
+        img.src = sources[i++];
+      };
+      img.onload = () => img.classList.add('loaded');
+      img.onerror = tryNext;
+      tryNext();
+    })();
+
+    /* Globals */
+    let scanTimer = null;
+    let scanningPaused = false;
+    let currentNet = null;
+
+    const networksEl = document.getElementById('networks');
+    const statusEl   = document.getElementById('status');
+
+    function el(tag, props={}, children=[]){
+      const n=document.createElement(tag);
+      Object.assign(n, props);
+      (children||[]).forEach(c=>n.appendChild(typeof c==='string'?document.createTextNode(c):c));
+      return n;
+    }
+
+    function barsFor(signal){
+      const s = Math.max(0, Math.min(100, signal || 0));
+      const lvl = s>=80?5:s>=60?4:s>=40?3:s>=20?2:s>0?1:0;
+      const wrap = el('span', { className:'bars', title: s + '%' });
+      for (let i=1;i<=5;i++){
+        const b = el('span', { className:`bar b${i} ${i<=lvl?'on':''}` });
+        wrap.appendChild(b);
+      }
+      return wrap;
+    }
+
+    function indicateKeyboard(input){
+      input.addEventListener('focus', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        fetch('/launch_keyboard', { method:'POST' }).catch(()=>{});
+      });
+      input.addEventListener('blur', () => fetch('/hide_keyboard', { method:'POST' }).catch(()=>{}));
+    }
+
+    function dedupeSortNetworks(networks){
+      const map=new Map();
+      (networks||[]).forEach(n=>{
+        const key=(n.ssid||'').trim();
+        if(!key) return;
+        const prev=map.get(key);
+        if(!prev || (n.signal||0)>(prev.signal||0) || (n.connected && !prev.connected)) map.set(key,n);
+      });
+      return Array.from(map.values()).sort((a,b)=>{
+        if(!!b.connected-!!a.connected) return 1*(!!b.connected-!!a.connected);
+        return (b.signal||0)-(a.signal||0);
+      });
+    }
+
+    function renderNetworks(list){
+      if (scanningPaused) return; // don't touch UI while user is typing
+      networksEl.innerHTML='';
+      if(!list || !list.length){
+        networksEl.appendChild(el('div',{className:'card'},['No networks found.']));
+        return;
+      }
+      list.forEach(net=>{
+        const card=el('div',{className:'card', role:'listitem'});
+        const left=el('div',{className:'ssid'},[barsFor(net.signal||0), el('span',{textContent:net.ssid})]);
+
+        const securityDetected = (net.secured === true) ? 'Secured (detected)'
+                                : (net.secured === false) ? 'Open (detected)'
+                                : 'Security unknown';
+        const secClass = (net.secured === true) ? 'badge secured' : (net.secured === false) ? 'badge open' : 'badge';
+
+        const tags=el('div',{},[
+          net.connected?el('span',{className:'badge connected',textContent:'Connected'}):null,
+          el('span',{className:secClass, textContent: securityDetected})
+        ].filter(Boolean));
+
+        const actions=el('div',{},[]);
+        if(net.connected){
+          const b=el('button',{className:'btn',textContent:'Disconnect'});
+          b.onclick=()=>disconnect(net.ssid);
+          actions.appendChild(b);
+        }else{
+          const b=el('button',{className:'btn primary',textContent:'Connect'});
+          b.onclick=()=>openSheet(net);
+          actions.appendChild(b);
+        }
+        const row=el('div',{className:'row'},[el('div',{className:'row'},[left,tags]),actions]);
+        card.appendChild(row);
+        networksEl.appendChild(card);
+      });
+    }
+
+    /* ===== Top-sheet logic ===== */
+    const sheetBackdrop = document.getElementById('sheetBackdrop');
+    const sheet         = document.getElementById('sheet');
+    const sheetSSID     = document.getElementById('sheetSSID');
+    const sheetSec      = document.getElementById('sheetSec');
+    const sheetSignal   = document.getElementById('sheetSignalBars');
+    const sheetPw       = document.getElementById('sheetPw');
+    const sheetEye      = document.getElementById('sheetEye');
+    const sheetShowCb   = document.getElementById('sheetShowCb');
+    const sheetJoin     = document.getElementById('sheetJoin');
+    const sheetClose    = document.getElementById('sheetClose');
+    const sheetHint     = document.getElementById('sheetHint');
+
+    indicateKeyboard(sheetPw);
+
+    function openSheet(net){
+      scanningPaused = true;
+      currentNet = net;
+
+      sheetSSID.textContent = net.ssid;
+
+      const securityDetected = (net.secured === true) ? 'Secured (detected)'
+                              : (net.secured === false) ? 'Open (detected)'
+                              : 'Security unknown';
+      sheetSec.textContent = securityDetected;
+      sheetSec.className = (net.secured === true) ? 'badge secured' : (net.secured === false) ? 'badge open' : 'badge';
+
+      sheetSignal.innerHTML = ''; sheetSignal.appendChild(barsFor(net.signal||0));
+
+      // ALWAYS allow typing a password (even for "open")
+      sheetPw.disabled = false;
+      sheetPw.type = 'password';
+      sheetPw.placeholder = 'Enter password (leave blank if open)';
+      sheetPw.value = '';
+
+      // Show modal near top
+      sheetBackdrop.classList.add('show');
+      sheet.classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      setTimeout(()=> sheetPw.focus(), 50);
+    }
+    function closeSheet(){
+      sheet.classList.remove('show');
+      sheetBackdrop.classList.remove('show');
+      sheetPw.blur();
+      scanningPaused = false;
+      currentNet = null;
+      scan();
+    }
+
+    sheetClose.onclick = closeSheet;
+
+    sheetEye.onclick = () => {
+      sheetPw.type = sheetPw.type === 'password' ? 'text' : 'password';
+      sheetPw.focus();
+    };
+    sheetShowCb.onchange = () => {
+      sheetPw.type = sheetShowCb.checked ? 'text' : 'password';
+      sheetPw.focus();
+    };
+    sheetJoin.onclick = async () => {
+      if (!currentNet) return;
+      sheetHint.textContent = 'Connecting…';
+      statusEl.innerHTML = '<span class="spinner"></span> Connecting…';
+      try{
+        const res = await fetch('/wifi/connect', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ ssid: currentNet.ssid, password: sheetPw.value || '' })
+        });
+        const data = await res.json();
+        statusEl.textContent = data.message || data.status || '';
+        sheetHint.textContent = data.message || data.status || '';
+        if (data.status === 'ok'){
+          setTimeout(()=> window.location.replace('/'), 1200);
+        } else {
+          // keep sheet open so user can adjust password
+          scanningPaused = true;
+        }
+      }catch(e){
+        statusEl.textContent = 'Connection failed.';
+        sheetHint.textContent = 'Connection failed.';
+        scanningPaused = true;
+      }
+    };
+
+    // clicking the dim background also closes
+    sheetBackdrop.addEventListener('click', (e)=>{
+      if (e.target === sheetBackdrop) closeSheet();
+    });
+
+    /* ===== API & scanning ===== */
+    async function scan(){
+      if (scanningPaused) return;
+      try{
+        const res = await fetch('/wifi/scan');
+        const data = await res.json();
+        renderNetworks(dedupeSortNetworks(data.networks || []));
+      }catch(e){
+        networksEl.innerHTML = '';
+        networksEl.appendChild(el('div', { className:'card' }, ['Scan failed.']));
+      }
+    }
+    async function disconnect(ssid){
+      try{
+        statusEl.innerHTML = '<span class="spinner"></span> Disconnecting…';
+        const res = await fetch('/wifi/disconnect', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ ssid })
+        });
+        const data = await res.json();
+        statusEl.textContent = data.message || data.status || '';
+        scan();
+      }catch(e){
+        statusEl.textContent = 'Disconnect failed.';
+      }
+    }
+
+    // Online -> return to app
+    window.addEventListener('online', () => window.location.replace('/'));
+    document.getElementById('btn-scan').onclick    = () => { if(!scanningPaused) scan(); };
+    document.getElementById('btn-refresh').onclick = () => { if(!scanningPaused) scan(); };
+
+    // Start scanning
+    scan();
+    scanTimer = setInterval(()=>{ if(!scanningPaused) scan(); }, 15000);
+  </script>
+</body>
+</html>

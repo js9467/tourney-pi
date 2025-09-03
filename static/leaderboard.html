@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard</title>
+  <script src="/static/js/offline.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <link rel="stylesheet" href="/static/css/base.css" />
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans overflow-y-auto">
+  <div id="app" v-cloak>
+    <!-- Header -->
+    <header class="bg-brand-blue text-white flex items-center justify-between px-4 py-3 shadow-md">
+      <div class="flex items-center space-x-4">
+        <img v-if="tournamentLogo" :src="tournamentLogo" alt="Tournament Logo" class="h-14 drop-shadow" />
+        <span v-else class="text-white text-base">Loading Logo...</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 bg-blue-900/50 backdrop-blur-sm rounded-full px-4 py-2 shadow-md border border-yellow-400/70 animate-pulse-slow">
+          <button data-vhf-toggle class="px-4 py-2 w-28 sm:w-32 font-semibold border border-yellow-400 text-yellow-400 rounded-full hover:bg-yellow-400 hover:text-blue-900 transition shadow-md">VHF ON</button>
+          <div class="flex items-center gap-2 text-sm text-white flex-nowrap">
+            <span class="text-lg">🔊</span>
+            <input type="range" min="0" max="100" data-vhf-volume class="h-1 bg-yellow-400 rounded-lg appearance-none cursor-pointer w-24 sm:w-32 md:w-40 flex-shrink-0 accent-yellow-400">
+            <span data-vhf-volume-display class="w-8 text-right text-xs"></span>
+          </div>
+        </div>
+        <a href="/" class="px-4 py-2 text-white font-semibold border border-white rounded hover:bg-white hover:text-blue-900 transition">Back</a>
+      </div>
+    </header>
+
+  <div class="p-4 max-w-screen-xl mx-auto">
+      <!-- Heading -->
+      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h1 class="text-4xl font-bold text-yellow-600">Tournament Leaderboard</h1>
+      </header>
+
+      <!-- Loading / Empty States -->
+      <div v-if="loading" class="text-center py-6 text-gray-600 text-sm">Loading leaderboard...</div>
+      <div v-else-if="groupedLeaderboardKeys.length === 0" class="text-center py-6 text-red-600 text-sm">No leaderboard entries found.</div>
+
+      <!-- Leaderboard Sections -->
+      <div v-for="category in groupedLeaderboardKeys" :key="category" class="mb-10">
+        <h2 class="text-2xl font-bold text-white bg-brand-blue px-4 py-2 rounded shadow mb-4 flex justify-between items-center">
+          {{ category }}
+          <div>
+            <button
+              v-if="showLimit[category] && groupedLeaderboard[category].length > 10"
+              @click="showLimit[category] = false"
+              class="text-xs px-2 py-1 bg-yellow-400 text-black rounded hover:bg-yellow-500 transition mr-1"
+            >
+              Show All
+            </button>
+            <button
+              v-else-if="!showLimit[category] && groupedLeaderboard[category].length > 10"
+              @click="showLimit[category] = true"
+              class="text-xs px-2 py-1 bg-yellow-400 text-black rounded hover:bg-yellow-500 transition"
+            >
+              Show Less
+            </button>
+          </div>
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div
+            v-for="entry in displayEntries(category)"
+            :key="entry.uid + entry.rank"
+            class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden flex flex-col relative"
+          >
+            <!-- Rank Badge -->
+            <div class="absolute top-2 left-2 bg-yellow-400 text-black font-bold px-2 py-1 rounded text-sm shadow">
+              {{ entry.displayRank }}
+            </div>
+
+            <!-- Boat Image -->
+            <img
+              class="lazy w-full h-48 object-cover opacity-0 transition-opacity duration-500"
+              :data-src="entry.image_path ? entry.image_path : tournamentLogo"
+              :src="tournamentLogo || '/static/images/bigrock.png'"
+              loading="lazy"
+              alt="Boat Image"
+            />
+
+            <div class="p-4 flex-1 flex flex-col justify-between">
+              <div>
+                <h2 class="text-xl font-semibold truncate">{{ entry.boat || entry.angler }}</h2>
+                <p v-if="entry.angler && entry.boat" class="text-brand-gold font-medium truncate">{{ entry.angler }}</p>
+                <p class="text-sm text-gray-600 mb-3 truncate">{{ entry.type || '' }}</p>
+              </div>
+              <div class="text-lg font-bold text-yellow-600">{{ entry.points }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="radio-player" hidden></audio>
+
+  <script src="/static/js/vhf.js"></script>
+
+  <script>
+  const app = Vue.createApp({
+    data() {
+      return {
+        leaderboard: [],
+        fullLeaderboard: [],
+        tournamentLogo: '',
+        loading: false,
+        showLimit: {} // Tracks per-category Show All/Show Less
+      };
+    },
+    computed: {
+      groupedLeaderboard() {
+        const grouped = {};
+        this.leaderboard.forEach(entry => {
+          const cat = entry.category || 'Uncategorized';
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push(entry);
+        });
+
+        // Sort by points desc and assign displayRank with tie logic
+        Object.keys(grouped).forEach(cat => {
+          // Sort by numeric points (desc)
+          grouped[cat].sort((a,b) => {
+            const getNum = e => parseFloat((e.points || '0').replace(/[^0-9.]/g,'')) || 0;
+            return getNum(b) - getNum(a);
+          });
+
+          // Assign displayRank considering ties
+          let lastPoints = null;
+          let lastRank = 0;
+          grouped[cat].forEach((entry, idx) => {
+            const pointsVal = parseFloat((entry.points || '0').replace(/[^0-9.]/g,'')) || 0;
+            if (pointsVal === lastPoints) {
+              entry.displayRank = `${lastRank}.`;
+            } else {
+              lastRank = idx + 1;
+              entry.displayRank = `${lastRank}.`;
+            }
+            lastPoints = pointsVal;
+          });
+        });
+
+        return grouped;
+      },
+      groupedLeaderboardKeys() {
+        return Object.keys(this.groupedLeaderboard);
+      }
+    },
+    methods: {
+      setBrandColor(t, cfg){
+        const color = cfg?.[t]?.color || '#002855';
+        document.documentElement.style.setProperty('--brand-color', color);
+      },
+      displayEntries(category) {
+        const entries = this.groupedLeaderboard[category] || [];
+        // Limit to 10 unless Show All is active
+        if (this.showLimit[category] && entries.length > 10) {
+          return entries.slice(0, 10);
+        }
+        return entries;
+      },
+      async loadLeaderboard() {
+        this.loading = true;
+        const res = await fetch('/api/leaderboard');
+        const data = await res.json();
+        this.fullLeaderboard = data.leaderboard || [];
+        // Default view shows full leaderboard but sliced per category
+        this.leaderboard = this.fullLeaderboard;
+        // Initialize Show Less mode for all categories
+        this.groupedLeaderboardKeys.forEach(cat => {
+          this.showLimit[cat] = true;
+        });
+        this.loading = false;
+        this.$nextTick(() => this.initLazyLoading());
+      },
+      async loadLogo() {
+        try {
+          const settingsRes = await fetch('/api/settings');
+          const settings = await settingsRes.json();
+          const tournament = settings.tournament;
+          const configRes = await fetch('https://js9467.github.io/Brtourney/settings.json');
+          const allTournaments = await configRes.json();
+          this.tournamentLogo = allTournaments[tournament]?.logo || '';
+          this.setBrandColor(tournament, allTournaments);
+        } catch(e) { console.error('Logo load failed', e); }
+      },
+      initLazyLoading() {
+        const images = document.querySelectorAll('img.lazy');
+        if (!images.length) return;
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.dataset.src;
+              img.onload = () => img.classList.add('opacity-100');
+              observer.unobserve(img);
+            }
+          });
+        }, { threshold: 0.1 });
+        images.forEach(img => observer.observe(img));
+      }
+    },
+    mounted() {
+      this.loadLogo();
+      this.loadLeaderboard();
+    }
+  });
+  app.mount('#app');
+  </script>
+
+  <style>[v-cloak]{display:none}</style>
+</body>
+</html>

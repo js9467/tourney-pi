@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wi-Fi Setup</title>
+    <script src="/static/js/offline.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="wifi-setup">
+        <h1>Connect to Wi-Fi</h1>
+        <form id="wifi-form" method="POST" action="/wifi">
+            <label for="ssid">Wi-Fi Network:</label>
+            <input type="text" id="ssid" name="ssid" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <button type="submit">Connect</button>
+        </form>
+    </div>
+      <script>
+          const ssidInput = document.getElementById('ssid');
+          const passwordInput = document.getElementById('password');
+          [ssidInput, passwordInput].forEach(inp => {
+              inp.addEventListener('focus', () => {
+                  fetch('/launch_keyboard', { method: 'POST' }).catch(() => {});
+              });
+              inp.addEventListener('blur', () => {
+                  fetch('/hide_keyboard', { method: 'POST' }).catch(() => {});
+              });
+          });
+          document.getElementById('wifi-form').addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              const response = await fetch('/wifi', {
+                  method: 'POST',
+                  body: formData
+              });
+              const result = await response.json();
+              if (result.status === 'success') {
+                  alert('Connecting to Wi-Fi... Please wait.');
+              }
+          });
+      </script>
+</body>
+</html>
