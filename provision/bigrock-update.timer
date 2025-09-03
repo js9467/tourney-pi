@@ -1,0 +1,10 @@
+[Unit]
+Description=Run BigRock Updater 4 times daily
+
+[Timer]
+OnCalendar=*-*-* 03,09,15,21:00:00
+Persistent=true
+Unit=bigrock-update.service
+
+[Install]
+WantedBy=timers.target
