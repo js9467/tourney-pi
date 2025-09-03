@@ -128,3 +128,18 @@ echo "[7/7] Verify"
 systemctl status "$APP_SERVICE" --no-pager || true
 systemctl list-timers | grep bigrock || true
 echo "Installer complete."
+
+echo "[8/7] Write deploy stamp"
+COMMIT=$(git -C "$APP_DIR" rev-parse HEAD 2>/dev/null || echo "unknown")
+DATE=$(date -Is)
+HOST=$(hostname)
+REQ_SHA=$( [ -f "$APP_DIR/requirements.txt" ] && sha256sum "$APP_DIR/requirements.txt" | awk '{print $1}' || echo "none" )
+
+cat > "$APP_DIR/installed-ok.txt" <<EOFSTAMP
+date=$DATE
+host=$HOST
+commit=$COMMIT
+requirements_sha256=$REQ_SHA
+EOFSTAMP
+
+echo "Wrote $APP_DIR/installed-ok.txt"
