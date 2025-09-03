@@ -1,5 +1,8 @@
 Flask
+flask-cors
 python-dateutil
 beautifulsoup4
+lxml
 requests
 Pillow
+gunicorn
