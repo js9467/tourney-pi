@@ -2314,6 +2314,82 @@ def toggle_followed_boat():
     settings["followed_boats"] = followed
     safe_json_dump(SETTINGS_FILE, settings)
     return jsonify({"status": "ok", "action": action, "followed_boats": followed})
+# --- UPDATE STATUS / TRIGGER ENDPOINTS ---
+
+import subprocess, shlex, os
+from pathlib import Path
+from flask import jsonify, request
+
+REPO_DIR = Path(__file__).resolve().parent  # /opt/bigrock-app
+UPDATER   = "/usr/local/bin/bigrock-update.sh"
+SERVICE   = "bigrock.service"
+
+def _run(cmd, cwd=None):
+    return subprocess.check_output(shlex.split(cmd), cwd=cwd, stderr=subprocess.STDOUT).decode("utf-8", "ignore").strip()
+
+@app.get("/api/update/status")
+def api_update_status():
+    try:
+        # ensure we know the remote state
+        _run("git fetch --quiet", cwd=REPO_DIR)
+
+        local  = _run("git rev-parse @", cwd=REPO_DIR)
+        remote = _run("git rev-parse @{u}", cwd=REPO_DIR)
+        base   = _run("git merge-base @ @{u}", cwd=REPO_DIR)
+
+        dirty  = False
+        try:
+            dirty = len(_run("git status --porcelain", cwd=REPO_DIR)) > 0
+        except Exception:
+            pass
+
+        if local == remote:
+            state = "up_to_date"
+        elif local == base:
+            state = "behind"
+        elif remote == base:
+            state = "ahead"
+        else:
+            state = "diverged"
+
+        # optional: is updater currently running?
+        updating = False
+        try:
+            # returns non-zero if service isn't running (fine)
+            out = _run("systemctl is-active bigrock-gitupdate.service")
+            updating = (out.strip() == "active")
+        except Exception:
+            updating = False
+
+        # last run time (if any)
+        last = ""
+        try:
+            last = _run("journalctl -u bigrock-gitupdate.service -n 1 --no-pager | sed -n '1p'")
+        except Exception:
+            pass
+
+        return jsonify({
+            "ok": True,
+            "state": state,        # up_to_date | behind | ahead | diverged
+            "dirty": dirty,
+            "local": local,
+            "remote": remote,
+            "updating": updating,
+            "last": last
+        })
+    except subprocess.CalledProcessError as e:
+        return jsonify({"ok": False, "error": e.output.decode("utf-8", "ignore")}), 500
+
+@app.post("/api/update")
+def api_update_now():
+    try:
+        # fire-and-forget the same script your timer uses
+        subprocess.Popen(["sudo", UPDATER], cwd=str(REPO_DIR))
+        return jsonify({"ok": True, "msg": "Updater started"}), 202
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 
 # ------------------------
 # Startup
