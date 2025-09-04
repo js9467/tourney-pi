@@ -173,233 +173,259 @@
   </div>
 
   <script>
-    /* Robust image loader for Palmer Lou (webp -> jpg -> hide) */
-    (function loadPalmer(){
-      const feature = document.getElementById('palmerFeature');
-      const img = document.getElementById('palmerImg');
-      if (!img || !feature) return;
-      const sources = ['/static/images/palmer_lou.webp', '/static/images/palmer_lou.jpg'];
-      let i = 0;
-      const tryNext = () => {
-        if (i >= sources.length){ feature.style.display = 'none'; return; }
-        img.src = sources[i++];
-      };
-      img.onload = () => img.classList.add('loaded');
-      img.onerror = tryNext;
-      tryNext();
-    })();
+  /* Robust image loader for Palmer Lou (webp -> jpg -> hide) */
+  (function loadPalmer(){
+    const feature = document.getElementById('palmerFeature');
+    const img = document.getElementById('palmerImg');
+    if (!img || !feature) return;
+    const sources = ['/static/images/palmer_lou.webp', '/static/images/palmer_lou.jpg'];
+    let i = 0;
+    const tryNext = () => {
+      if (i >= sources.length){ feature.style.display = 'none'; return; }
+      img.src = sources[i++];
+    };
+    img.onload = () => img.classList.add('loaded');
+    img.onerror = tryNext;
+    tryNext();
+  })();
 
-    /* Globals */
-    let scanTimer = null;
-    let scanningPaused = false;
-    let currentNet = null;
+  /* ===== Global on-screen keyboard binder (works for all inputs) ===== */
+  (function bindOSK(){
+    const sel = 'input[type="text"], input[type="password"], input[type="search"], input:not([type]), textarea';
 
-    const networksEl = document.getElementById('networks');
-    const statusEl   = document.getElementById('status');
-
-    function el(tag, props={}, children=[]){
-      const n=document.createElement(tag);
-      Object.assign(n, props);
-      (children||[]).forEach(c=>n.appendChild(typeof c==='string'?document.createTextNode(c):c));
-      return n;
-    }
-
-    function barsFor(signal){
-      const s = Math.max(0, Math.min(100, signal || 0));
-      const lvl = s>=80?5:s>=60?4:s>=40?3:s>=20?2:s>0?1:0;
-      const wrap = el('span', { className:'bars', title: s + '%' });
-      for (let i=1;i<=5;i++){
-        const b = el('span', { className:`bar b${i} ${i<=lvl?'on':''}` });
-        wrap.appendChild(b);
-      }
-      return wrap;
-    }
-
-    function indicateKeyboard(input){
-      input.addEventListener('focus', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Launch keyboard when ANY input gets focus (bubbling)
+    document.addEventListener('focusin', (e) => {
+      if (e.target.matches(sel)) {
         fetch('/launch_keyboard', { method:'POST' }).catch(()=>{});
-      });
-      input.addEventListener('blur', () => fetch('/hide_keyboard', { method:'POST' }).catch(()=>{}));
-    }
-
-    function dedupeSortNetworks(networks){
-      const map=new Map();
-      (networks||[]).forEach(n=>{
-        const key=(n.ssid||'').trim();
-        if(!key) return;
-        const prev=map.get(key);
-        if(!prev || (n.signal||0)>(prev.signal||0) || (n.connected && !prev.connected)) map.set(key,n);
-      });
-      return Array.from(map.values()).sort((a,b)=>{
-        if(!!b.connected-!!a.connected) return 1*(!!b.connected-!!a.connected);
-        return (b.signal||0)-(a.signal||0);
-      });
-    }
-
-    function renderNetworks(list){
-      if (scanningPaused) return; // don't touch UI while user is typing
-      networksEl.innerHTML='';
-      if(!list || !list.length){
-        networksEl.appendChild(el('div',{className:'card'},['No networks found.']));
-        return;
       }
-      list.forEach(net=>{
-        const card=el('div',{className:'card', role:'listitem'});
-        const left=el('div',{className:'ssid'},[barsFor(net.signal||0), el('span',{textContent:net.ssid})]);
+    });
 
-        const securityDetected = (net.secured === true) ? 'Secured (detected)'
-                                : (net.secured === false) ? 'Open (detected)'
-                                : 'Security unknown';
-        const secClass = (net.secured === true) ? 'badge secured' : (net.secured === false) ? 'badge open' : 'badge';
+    // Also nudge it on touch/click before focus lands (kiosk quirk)
+    document.addEventListener('pointerdown', (e) => {
+      const t = e.target.closest(sel);
+      if (t) {
+        setTimeout(() => fetch('/launch_keyboard', { method:'POST' }).catch(()=>{}), 0);
+      }
+    });
 
-        const tags=el('div',{},[
-          net.connected?el('span',{className:'badge connected',textContent:'Connected'}):null,
-          el('span',{className:secClass, textContent: securityDetected})
-        ].filter(Boolean));
+    // Hide keyboard when leaving inputs
+    document.addEventListener('focusout', (e) => {
+      if (e.target.matches(sel)) {
+        fetch('/hide_keyboard', { method:'POST' }).catch(()=>{});
+      }
+    });
+  })();
 
-        const actions=el('div',{},[]);
-        if(net.connected){
-          const b=el('button',{className:'btn',textContent:'Disconnect'});
-          b.onclick=()=>disconnect(net.ssid);
-          actions.appendChild(b);
-        }else{
-          const b=el('button',{className:'btn primary',textContent:'Connect'});
-          b.onclick=()=>openSheet(net);
-          actions.appendChild(b);
-        }
-        const row=el('div',{className:'row'},[el('div',{className:'row'},[left,tags]),actions]);
-        card.appendChild(row);
-        networksEl.appendChild(card);
-      });
+  /* Globals */
+  let scanTimer = null;
+  let scanningPaused = false;
+  let currentNet = null;
+
+  const networksEl = document.getElementById('networks');
+  const statusEl   = document.getElementById('status');
+
+  function el(tag, props={}, children=[]){
+    const n=document.createElement(tag);
+    Object.assign(n, props);
+    (children||[]).forEach(c=>n.appendChild(typeof c==='string'?document.createTextNode(c):c));
+    return n;
+  }
+
+  function barsFor(signal){
+    const s = Math.max(0, Math.min(100, signal || 0));
+    const lvl = s>=80?5:s>=60?4:s>=40?3:s>=20?2:s>0?1:0;
+    const wrap = el('span', { className:'bars', title: s + '%' });
+    for (let i=1;i<=5;i++){
+      const b = el('span', { className:`bar b${i} ${i<=lvl?'on':''}` });
+      wrap.appendChild(b);
     }
+    return wrap;
+  }
 
-    /* ===== Top-sheet logic ===== */
-    const sheetBackdrop = document.getElementById('sheetBackdrop');
-    const sheet         = document.getElementById('sheet');
-    const sheetSSID     = document.getElementById('sheetSSID');
-    const sheetSec      = document.getElementById('sheetSec');
-    const sheetSignal   = document.getElementById('sheetSignalBars');
-    const sheetPw       = document.getElementById('sheetPw');
-    const sheetEye      = document.getElementById('sheetEye');
-    const sheetShowCb   = document.getElementById('sheetShowCb');
-    const sheetJoin     = document.getElementById('sheetJoin');
-    const sheetClose    = document.getElementById('sheetClose');
-    const sheetHint     = document.getElementById('sheetHint');
+  function dedupeSortNetworks(networks){
+    const map=new Map();
+    (networks||[]).forEach(n=>{
+      const key=(n.ssid||'').trim();
+      if(!key) return;
+      const prev=map.get(key);
+      if(!prev || (n.signal||0)>(prev.signal||0) || (n.connected && !prev.connected)) map.set(key,n);
+    });
+    return Array.from(map.values()).sort((a,b)=>{
+      if(!!b.connected-!!a.connected) return 1*(!!b.connected-!!a.connected);
+      return (b.signal||0)-(a.signal||0);
+    });
+  }
 
-    indicateKeyboard(sheetPw);
-
-    function openSheet(net){
-      scanningPaused = true;
-      currentNet = net;
-
-      sheetSSID.textContent = net.ssid;
+  function renderNetworks(list){
+    if (scanningPaused) return; // don't touch UI while user is typing
+    networksEl.innerHTML='';
+    if(!list || !list.length){
+      networksEl.appendChild(el('div',{className:'card'},['No networks found.']));
+      return;
+    }
+    list.forEach(net=>{
+      const card=el('div',{className:'card', role:'listitem'});
+      const left=el('div',{className:'ssid'},[barsFor(net.signal||0), el('span',{textContent:net.ssid})]);
 
       const securityDetected = (net.secured === true) ? 'Secured (detected)'
                               : (net.secured === false) ? 'Open (detected)'
                               : 'Security unknown';
-      sheetSec.textContent = securityDetected;
-      sheetSec.className = (net.secured === true) ? 'badge secured' : (net.secured === false) ? 'badge open' : 'badge';
+      const secClass = (net.secured === true) ? 'badge secured' : (net.secured === false) ? 'badge open' : 'badge';
 
-      sheetSignal.innerHTML = ''; sheetSignal.appendChild(barsFor(net.signal||0));
+      const tags=el('div',{},[
+        net.connected?el('span',{className:'badge connected',textContent:'Connected'}):null,
+        el('span',{className:secClass, textContent: securityDetected})
+      ].filter(Boolean));
 
-      // ALWAYS allow typing a password (even for "open")
-      sheetPw.disabled = false;
-      sheetPw.type = 'password';
-      sheetPw.placeholder = 'Enter password (leave blank if open)';
-      sheetPw.value = '';
-
-      // Show modal near top
-      sheetBackdrop.classList.add('show');
-      sheet.classList.add('show');
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      setTimeout(()=> sheetPw.focus(), 50);
-    }
-    function closeSheet(){
-      sheet.classList.remove('show');
-      sheetBackdrop.classList.remove('show');
-      sheetPw.blur();
-      scanningPaused = false;
-      currentNet = null;
-      scan();
-    }
-
-    sheetClose.onclick = closeSheet;
-
-    sheetEye.onclick = () => {
-      sheetPw.type = sheetPw.type === 'password' ? 'text' : 'password';
-      sheetPw.focus();
-    };
-    sheetShowCb.onchange = () => {
-      sheetPw.type = sheetShowCb.checked ? 'text' : 'password';
-      sheetPw.focus();
-    };
-    sheetJoin.onclick = async () => {
-      if (!currentNet) return;
-      sheetHint.textContent = 'Connecting…';
-      statusEl.innerHTML = '<span class="spinner"></span> Connecting…';
-      try{
-        const res = await fetch('/wifi/connect', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ ssid: currentNet.ssid, password: sheetPw.value || '' })
-        });
-        const data = await res.json();
-        statusEl.textContent = data.message || data.status || '';
-        sheetHint.textContent = data.message || data.status || '';
-        if (data.status === 'ok'){
-          setTimeout(()=> window.location.replace('/'), 1200);
-        } else {
-          // keep sheet open so user can adjust password
-          scanningPaused = true;
-        }
-      }catch(e){
-        statusEl.textContent = 'Connection failed.';
-        sheetHint.textContent = 'Connection failed.';
-        scanningPaused = true;
+      const actions=el('div',{},[]);
+      if(net.connected){
+        const b=el('button',{className:'btn',textContent:'Disconnect'});
+        b.onclick=()=>disconnect(net.ssid);
+        actions.appendChild(b);
+      }else{
+        const b=el('button',{className:'btn primary',textContent:'Connect'});
+        b.onclick=()=>openSheet(net);
+        actions.appendChild(b);
       }
-    };
-
-    // clicking the dim background also closes
-    sheetBackdrop.addEventListener('click', (e)=>{
-      if (e.target === sheetBackdrop) closeSheet();
+      const row=el('div',{className:'row'},[el('div',{className:'row'},[left,tags]),actions]);
+      card.appendChild(row);
+      networksEl.appendChild(card);
     });
+  }
 
-    /* ===== API & scanning ===== */
-    async function scan(){
-      if (scanningPaused) return;
-      try{
-        const res = await fetch('/wifi/scan');
-        const data = await res.json();
-        renderNetworks(dedupeSortNetworks(data.networks || []));
-      }catch(e){
-        networksEl.innerHTML = '';
-        networksEl.appendChild(el('div', { className:'card' }, ['Scan failed.']));
-      }
-    }
-    async function disconnect(ssid){
-      try{
-        statusEl.innerHTML = '<span class="spinner"></span> Disconnecting…';
-        const res = await fetch('/wifi/disconnect', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ ssid })
-        });
-        const data = await res.json();
-        statusEl.textContent = data.message || data.status || '';
-        scan();
-      }catch(e){
-        statusEl.textContent = 'Disconnect failed.';
-      }
-    }
+  /* ===== Top-sheet logic ===== */
+  const sheetBackdrop = document.getElementById('sheetBackdrop');
+  const sheet         = document.getElementById('sheet');
+  const sheetSSID     = document.getElementById('sheetSSID');
+  const sheetSec      = document.getElementById('sheetSec');
+  const sheetSignal   = document.getElementById('sheetSignalBars');
+  const sheetPw       = document.getElementById('sheetPw');
+  const sheetEye      = document.getElementById('sheetEye');
+  const sheetShowCb   = document.getElementById('sheetShowCb');
+  const sheetJoin     = document.getElementById('sheetJoin');
+  const sheetClose    = document.getElementById('sheetClose');
+  const sheetHint     = document.getElementById('sheetHint');
 
-    // Online -> return to app
-    window.addEventListener('online', () => window.location.replace('/'));
-    document.getElementById('btn-scan').onclick    = () => { if(!scanningPaused) scan(); };
-    document.getElementById('btn-refresh').onclick = () => { if(!scanningPaused) scan(); };
+  function openSheet(net){
+    scanningPaused = true;
+    currentNet = net;
 
-    // Start scanning
+    sheetSSID.textContent = net.ssid;
+
+    const securityDetected = (net.secured === true) ? 'Secured (detected)'
+                            : (net.secured === false) ? 'Open (detected)'
+                            : 'Security unknown';
+    sheetSec.textContent = securityDetected;
+    sheetSec.className = (net.secured === true) ? 'badge secured' : (net.secured === false) ? 'badge open' : 'badge';
+
+    sheetSignal.innerHTML = ''; sheetSignal.appendChild(barsFor(net.signal||0));
+
+    // ALWAYS allow typing a password (even for "open")
+    sheetPw.disabled = false;
+    sheetPw.type = 'password';
+    sheetPw.placeholder = 'Enter password (leave blank if open)';
+    sheetPw.value = '';
+
+    // Show modal near top
+    sheetBackdrop.classList.add('show');
+    sheet.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    // Proactively launch keyboard for kiosk focus quirks
+    fetch('/launch_keyboard', { method:'POST' }).catch(()=>{});
+    setTimeout(()=> sheetPw.focus({ preventScroll:true }), 50);
+  }
+
+  function closeSheet(){
+    sheet.classList.remove('show');
+    sheetBackdrop.classList.remove('show');
+    sheetPw.blur();
+    // Hide keyboard explicitly when sheet closes
+    fetch('/hide_keyboard', { method:'POST' }).catch(()=>{});
+    scanningPaused = false;
+    currentNet = null;
     scan();
-    scanTimer = setInterval(()=>{ if(!scanningPaused) scan(); }, 15000);
-  </script>
+  }
+
+  sheetClose.onclick = closeSheet;
+
+  sheetEye.onclick = () => {
+    sheetPw.type = sheetPw.type === 'password' ? 'text' : 'password';
+    sheetPw.focus();
+  };
+  sheetShowCb.onchange = () => {
+    sheetPw.type = sheetShowCb.checked ? 'text' : 'password';
+    sheetPw.focus();
+  };
+  sheetJoin.onclick = async () => {
+    if (!currentNet) return;
+    sheetHint.textContent = 'Connecting…';
+    statusEl.innerHTML = '<span class="spinner"></span> Connecting…';
+    try{
+      const res = await fetch('/wifi/connect', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ ssid: currentNet.ssid, password: sheetPw.value || '' })
+      });
+      const data = await res.json();
+      statusEl.textContent = data.message || data.status || '';
+      sheetHint.textContent = data.message || data.status || '';
+      if (data.status === 'ok'){
+        setTimeout(()=> window.location.replace('/'), 1200);
+      } else {
+        // keep sheet open so user can adjust password
+        scanningPaused = true;
+        setTimeout(()=> sheetPw.focus({ preventScroll:true }), 50);
+      }
+    }catch(e){
+      statusEl.textContent = 'Connection failed.';
+      sheetHint.textContent = 'Connection failed.';
+      scanningPaused = true;
+      setTimeout(()=> sheetPw.focus({ preventScroll:true }), 50);
+    }
+  };
+
+  // clicking the dim background also closes
+  sheetBackdrop.addEventListener('click', (e)=>{
+    if (e.target === sheetBackdrop) closeSheet();
+  });
+
+  /* ===== API & scanning ===== */
+  async function scan(){
+    if (scanningPaused) return;
+    try{
+      const res = await fetch('/wifi/scan');
+      const data = await res.json();
+      renderNetworks(dedupeSortNetworks(data.networks || []));
+    }catch(e){
+      networksEl.innerHTML = '';
+      networksEl.appendChild(el('div', { className:'card' }, ['Scan failed.']));
+    }
+  }
+  async function disconnect(ssid){
+    try{
+      statusEl.innerHTML = '<span class="spinner"></span> Disconnecting…';
+      const res = await fetch('/wifi/disconnect', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ ssid })
+      });
+      const data = await res.json();
+      statusEl.textContent = data.message || data.status || '';
+      scan();
+    }catch(e){
+      statusEl.textContent = 'Disconnect failed.';
+    }
+  }
+
+  // Online -> return to app
+  window.addEventListener('online', () => window.location.replace('/'));
+  document.getElementById('btn-scan').onclick    = () => { if(!scanningPaused) scan(); };
+  document.getElementById('btn-refresh').onclick = () => { if(!scanningPaused) scan(); };
+
+  // Start scanning
+  scan();
+  scanTimer = setInterval(()=>{ if(!scanningPaused) scan(); }, 15000);
+</script>
+
 </body>
 </html>
